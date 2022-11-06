@@ -27,6 +27,6 @@ public class Token {
     }
 
     public boolean equals(Token token) {
-        return token.getLiteral() == this.literal && token.getType() == this.type;
+        return token.getLiteral().equals(this.literal) && token.getType() == this.type;
     }
 }

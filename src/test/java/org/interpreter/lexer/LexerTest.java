@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class LexerTest {
-    private final Lexer lexer = new Lexer("=+(){},;");
-
     @Test
-    public void testNextToken() {
+    public void testNextTokenBasic() {
+        final Lexer lexer = new Lexer("=+(){},;");
         final Token[] results = {
                 new Token(TokenType.ASSIGN, "="),
                 new Token(TokenType.PLUS, "+"),
@@ -21,7 +20,8 @@ public class LexerTest {
                 new Token(TokenType.EOF, ""),
         };
         for (final Token result : results) {
-            final boolean isEqual = result.equals(lexer.nextToken());
+            final Token token = lexer.nextToken();
+            final boolean isEqual = result.equals(token);
             assertTrue(isEqual);
         }
     }
