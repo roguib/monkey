@@ -1,8 +1,9 @@
 package org.interpreter.lexer;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class LexerTest {
     @Test
@@ -21,8 +22,83 @@ public class LexerTest {
         };
         for (final Token result : results) {
             final Token token = lexer.nextToken();
-            final boolean isEqual = result.equals(token);
-            assertTrue(isEqual);
+            assertEquals(result.toString(), token.toString());
         }
+    }
+
+    @Test
+    public void testNextTokenSimpleProgram() {
+        final String program = readProgram("src/test/resources/fixtures/program.monkey");
+        final Lexer lexer = new Lexer(program);
+        final Token[] results = {
+                // let five = 5;
+                new Token(TokenType.LET, "let"),
+                new Token(TokenType.IDENT, "five"),
+                new Token(TokenType.ASSIGN, "="),
+                new Token(TokenType.INT, "5"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // let ten = 10;
+                new Token(TokenType.LET, "let"),
+                new Token(TokenType.IDENT, "ten"),
+                new Token(TokenType.ASSIGN, "="),
+                new Token(TokenType.INT, "10"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // let add = fn(x, y) {
+                new Token(TokenType.LET, "let"),
+                new Token(TokenType.IDENT, "add"),
+                new Token(TokenType.ASSIGN, "="),
+                new Token(TokenType.FUNCTION, "fn"),
+                new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.IDENT, "x"),
+                new Token(TokenType.COMMA, ","),
+                new Token(TokenType.IDENT, "y"),
+                new Token(TokenType.RPAREN, ")"),
+                new Token(TokenType.LBRACE, "{"),
+
+                // x + y;
+                new Token(TokenType.IDENT, "x"),
+                new Token(TokenType.PLUS, "+"),
+                new Token(TokenType.IDENT, "y"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // }
+                new Token(TokenType.RBRACE, "}"),
+
+                // let result = add(five, ten);
+                new Token(TokenType.LET, "let"),
+                new Token(TokenType.IDENT, "result"),
+                new Token(TokenType.ASSIGN, "="),
+                new Token(TokenType.IDENT, "add"),
+                new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.IDENT, "five"),
+                new Token(TokenType.COMMA, ","),
+                new Token(TokenType.IDENT, "ten"),
+                new Token(TokenType.RPAREN, ")"),
+                new Token(TokenType.SEMICOLON, ";"),
+        };
+        for (final Token result : results) {
+            final Token token = lexer.nextToken();
+            assertEquals(result.toString(), token.toString());
+        }
+    }
+
+    private String readProgram(final String path) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+                if (line != null) {
+                    sb.append(System.getProperty("line.separator"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 }
