@@ -77,6 +77,14 @@ public class LexerTest {
                 new Token(TokenType.IDENT, "ten"),
                 new Token(TokenType.RPAREN, ")"),
                 new Token(TokenType.SEMICOLON, ";"),
+
+                // !-/*5;
+                new Token(TokenType.BANG, "!"),
+                new Token(TokenType.MINUS, "-"),
+                new Token(TokenType.SLASH, "/"),
+                new Token(TokenType.ASTERISK, "*"),
+                new Token(TokenType.INT, "5"),
+                new Token(TokenType.SEMICOLON, ";"),
         };
         for (final Token result : results) {
             final Token token = lexer.nextToken();

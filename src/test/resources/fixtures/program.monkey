@@ -6,3 +6,5 @@ let add = fn(x, y) {
 }
 
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;

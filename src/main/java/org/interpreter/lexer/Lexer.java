@@ -131,6 +131,24 @@ public class Lexer {
             case '+':
                 token = new Token(TokenType.PLUS, String.valueOf(ch));
                 break;
+            case '-':
+                token = new Token(TokenType.MINUS, String.valueOf(ch));
+                break;
+            case '*':
+                token = new Token(TokenType.ASTERISK, String.valueOf(ch));
+                break;
+            case '/':
+                token = new Token(TokenType.SLASH, String.valueOf(ch));
+                break;
+            case '<':
+                token = new Token(TokenType.LT, String.valueOf(ch));
+                break;
+            case '>':
+                token = new Token(TokenType.GT, String.valueOf(ch));
+                break;
+            case '!':
+                token = new Token(TokenType.BANG, String.valueOf(ch));
+                break;
             default:
                 if (isLetter(ch)) {
                     final String literal = readIdentifier();
