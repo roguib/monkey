@@ -4,9 +4,18 @@ public class Token {
     private TokenType type;
     private final String literal;
 
-    public Token(final TokenType type, final String literal) {
-        this.type = type;
+    private Token(final String literal) {
         this.literal = literal;
+    }
+
+    public Token(final TokenType type, final String literal) {
+        this(literal);
+        this.type = type;
+    }
+
+    public Token(final TokenType type, final char ch) {
+        this(String.valueOf(ch));
+        this.type = type;
     }
 
     public TokenType getType() {

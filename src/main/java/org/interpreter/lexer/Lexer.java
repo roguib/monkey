@@ -108,46 +108,46 @@ public class Lexer {
 
         switch(ch) {
             case '=':
-                token = new Token(TokenType.ASSIGN, String.valueOf(ch));
+                token = new Token(TokenType.ASSIGN, ch);
                 break;
             case ';':
-                token = new Token(TokenType.SEMICOLON, String.valueOf(ch));
+                token = new Token(TokenType.SEMICOLON, ch);
                 break;
             case '(':
-                token = new Token(TokenType.LPAREN, String.valueOf(ch));
+                token = new Token(TokenType.LPAREN, ch);
                 break;
             case ')':
-                token = new Token(TokenType.RPAREN, String.valueOf(ch));
+                token = new Token(TokenType.RPAREN, ch);
                 break;
             case '{':
-                token = new Token(TokenType.LBRACE, String.valueOf(ch));
+                token = new Token(TokenType.LBRACE, ch);
                 break;
             case '}':
-                token = new Token(TokenType.RBRACE, String.valueOf(ch));
+                token = new Token(TokenType.RBRACE, ch);
                 break;
             case ',':
-                token = new Token(TokenType.COMMA, String.valueOf(ch));
+                token = new Token(TokenType.COMMA, ch);
                 break;
             case '+':
-                token = new Token(TokenType.PLUS, String.valueOf(ch));
+                token = new Token(TokenType.PLUS, ch);
                 break;
             case '-':
-                token = new Token(TokenType.MINUS, String.valueOf(ch));
+                token = new Token(TokenType.MINUS, ch);
                 break;
             case '*':
-                token = new Token(TokenType.ASTERISK, String.valueOf(ch));
+                token = new Token(TokenType.ASTERISK, ch);
                 break;
             case '/':
-                token = new Token(TokenType.SLASH, String.valueOf(ch));
+                token = new Token(TokenType.SLASH, ch);
                 break;
             case '<':
-                token = new Token(TokenType.LT, String.valueOf(ch));
+                token = new Token(TokenType.LT, ch);
                 break;
             case '>':
-                token = new Token(TokenType.GT, String.valueOf(ch));
+                token = new Token(TokenType.GT, ch);
                 break;
             case '!':
-                token = new Token(TokenType.BANG, String.valueOf(ch));
+                token = new Token(TokenType.BANG, ch);
                 break;
             default:
                 if (isLetter(ch)) {
