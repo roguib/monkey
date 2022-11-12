@@ -32,7 +32,7 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token type: " + type + " literal value: " + literal;
+        return "{ Type: " + type + " Literal: " + literal + " }";
     }
 
     public boolean equals(Token token) {
