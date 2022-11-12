@@ -132,6 +132,8 @@ public class LexerTest {
                 new Token(TokenType.NOT_EQ, "!="),
                 new Token(TokenType.INT, "9"),
                 new Token(TokenType.SEMICOLON, ";"),
+
+                new Token(TokenType.EOF, ""),
         };
         for (final Token result : results) {
             final Token token = lexer.nextToken();

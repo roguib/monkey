@@ -1,10 +1,10 @@
 package org.interpreter;
 
-import org.interpreter.lexer.*;
+import org.interpreter.repl.Repl;
 
 public class Main {
     public static void main(String[] args) {
-        final Token token = new Token(TokenType.ILLEGAL, "5");
-        System.out.println(token);
+        System.out.println("Welcome to monkey programming language interactive mode (REPL)");
+        Repl.start();
     }
 }
