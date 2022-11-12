@@ -15,6 +15,11 @@ public class Lexer {
     {
         keywords.put("fn", TokenType.FUNCTION);
         keywords.put("let", TokenType.LET);
+        keywords.put("true", TokenType.TRUE);
+        keywords.put("false", TokenType.FALSE);
+        keywords.put("if", TokenType.IF);
+        keywords.put("else", TokenType.ELSE);
+        keywords.put("return", TokenType.RETURN);
     }
 
     public Lexer(final String input) {

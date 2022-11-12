@@ -93,6 +93,33 @@ public class LexerTest {
                 new Token(TokenType.GT, ">"),
                 new Token(TokenType.INT, "5"),
                 new Token(TokenType.SEMICOLON, ";"),
+
+                // if (5 < 10) {
+                new Token(TokenType.IF, "if"),
+                new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.INT, "5"),
+                new Token(TokenType.LT, "<"),
+                new Token(TokenType.INT, "10"),
+                new Token(TokenType.RPAREN, ")"),
+                new Token(TokenType.LBRACE, "{"),
+
+                // return true;
+                new Token(TokenType.RETURN, "return"),
+                new Token(TokenType.TRUE, "true"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // } else {
+                new Token(TokenType.RBRACE, "}"),
+                new Token(TokenType.ELSE, "else"),
+                new Token(TokenType.LBRACE, "{"),
+
+                // return false;
+                new Token(TokenType.RETURN, "return"),
+                new Token(TokenType.FALSE, "false"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // }
+                new Token(TokenType.RBRACE, "}"),
         };
         for (final Token result : results) {
             final Token token = lexer.nextToken();
