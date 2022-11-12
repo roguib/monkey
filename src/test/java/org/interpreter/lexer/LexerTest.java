@@ -120,6 +120,18 @@ public class LexerTest {
 
                 // }
                 new Token(TokenType.RBRACE, "}"),
+
+                // 10 == 10;
+                new Token(TokenType.INT, "10"),
+                new Token(TokenType.EQ, "=="),
+                new Token(TokenType.INT, "10"),
+                new Token(TokenType.SEMICOLON, ";"),
+
+                // 10 != 9;
+                new Token(TokenType.INT, "10"),
+                new Token(TokenType.NOT_EQ, "!="),
+                new Token(TokenType.INT, "9"),
+                new Token(TokenType.SEMICOLON, ";"),
         };
         for (final Token result : results) {
             final Token token = lexer.nextToken();

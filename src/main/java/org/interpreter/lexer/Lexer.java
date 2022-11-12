@@ -43,6 +43,19 @@ public class Lexer {
     }
 
     /**
+     * Returns the next character pointed by readPosition without incrementing
+     * position nor readPosition indexes
+     * @return The next character or 0 if readPosition >= input.length()
+     */
+    private char peekChar() {
+        if (readPosition >= input.length()) {
+            return 0;
+        } else {
+            return input.charAt(readPosition);
+        }
+    }
+
+    /**
      *
      * @param c
      * @return True if character c is a letter, false otherwise
@@ -113,7 +126,13 @@ public class Lexer {
 
         switch(ch) {
             case '=':
-                token = new Token(TokenType.ASSIGN, ch);
+                if (peekChar() == '=') {
+                    final String firstCh = String.valueOf(ch);
+                    readChar();
+                    token = new Token(TokenType.EQ, firstCh + ch);
+                } else {
+                    token = new Token(TokenType.ASSIGN, ch);
+                }
                 break;
             case ';':
                 token = new Token(TokenType.SEMICOLON, ch);
@@ -152,7 +171,13 @@ public class Lexer {
                 token = new Token(TokenType.GT, ch);
                 break;
             case '!':
-                token = new Token(TokenType.BANG, ch);
+                if (peekChar() == '=') {
+                    final String firstCh = String.valueOf(ch);
+                    readChar();
+                    token = new Token(TokenType.NOT_EQ, firstCh + ch);
+                } else {
+                    token = new Token(TokenType.BANG, ch);
+                }
                 break;
             default:
                 if (isLetter(ch)) {
