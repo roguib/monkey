@@ -45,6 +45,8 @@ public class Parser {
         switch (curToken.getType()) {
             case LET:
                 return parseLetStatement();
+            case RETURN:
+                return parseReturnStatement();
             default:
                 return null;
         }
@@ -62,6 +64,19 @@ public class Parser {
         if (!expectPeek(TokenType.ASSIGN)) {
             return null;
         }
+
+        // TODO: Skipping expressions until we encounter semicolon
+        while (!curTokenIs(TokenType.SEMICOLON)) {
+            nextToken();
+        }
+
+        return stmt;
+    }
+
+    private ReturnStatement parseReturnStatement() {
+        ReturnStatement stmt = new ReturnStatement(curToken);
+
+        nextToken();
 
         // TODO: Skipping expressions until we encounter semicolon
         while (!curTokenIs(TokenType.SEMICOLON)) {
