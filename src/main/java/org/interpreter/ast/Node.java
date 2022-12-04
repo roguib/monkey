@@ -7,4 +7,5 @@ public interface Node {
      * @return the literal value of the associated token
      */
     public String tokenLiteral();
+    public String toString();
 }

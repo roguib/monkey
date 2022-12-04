@@ -1,6 +1,8 @@
 package org.interpreter.ast;
 
 import org.interpreter.lexer.Lexer;
+import org.interpreter.lexer.Token;
+import org.interpreter.lexer.TokenType;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -43,6 +45,28 @@ public class ParserTest {
             final Statement stmt = program.getStatements().get(i);
             testReturnStatement(stmt, "return");
         }
+    }
+
+    @Test
+    public void testToString() {
+        final String input = readProgram("src/test/resources/fixtures/toString-parser.monkey");
+
+        final Program p = new Program();
+        p.addStatement(
+            new LetStatement(
+                new Token(TokenType.LET, "let"),
+                new Identifier(
+                    new Token(TokenType.IDENT, "myVar"),
+                    "myVar"
+                ),
+                new Identifier(
+                    new Token(TokenType.IDENT, "anotherVar"),
+                    "anotherVar"
+                )
+            )
+        );
+
+        assertEquals(p.toString(), input);
     }
 
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {

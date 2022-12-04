@@ -2,6 +2,9 @@ package org.interpreter.ast;
 
 import org.interpreter.lexer.Token;
 
+/**
+ * A representation in the Monkey language of a variable
+ */
 public class Identifier implements Expression {
     private Token token;
     private String value;
@@ -23,5 +26,10 @@ public class Identifier implements Expression {
 
     public String getValue() {
         return this.value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

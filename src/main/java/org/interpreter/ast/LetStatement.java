@@ -21,6 +21,12 @@ public class LetStatement implements Statement {
         this.token = token;
     }
 
+    public LetStatement(Token token, Identifier name, Expression value) {
+        this.token = token;
+        this.name = name;
+        this.value = value;
+    }
+
     @Override
     public String tokenLiteral() {
         return token.getLiteral();
@@ -37,5 +43,18 @@ public class LetStatement implements Statement {
 
     public void setName(Identifier name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(token.getLiteral() + " " + name.toString() + " = ");
+
+        if (value != null) {
+            sb.append(value.toString());
+        }
+
+        sb.append(";");
+
+        return sb.toString();
     }
 }

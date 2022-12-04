@@ -37,4 +37,11 @@ public class Program implements Node {
     public void addStatement(final Statement stmt) {
         statements.add(stmt);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        statements.forEach(s -> sb.append(s.toString()));
+        return sb.toString();
+    }
 }

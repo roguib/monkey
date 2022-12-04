@@ -24,4 +24,16 @@ public class ReturnStatement implements Statement {
     public void statementNode() {
 
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(token.getLiteral() + " ");
+
+        if (returnValue != null) {
+            sb.append(returnValue.toString());
+        }
+
+        sb.append(";");
+        return sb.toString();
+    }
 }
