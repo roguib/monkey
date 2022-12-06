@@ -69,6 +69,22 @@ public class ParserTest {
         assertEquals(p.toString(), input);
     }
 
+    @Test
+    public void testIdentifierExpression() {
+        final String input = "foovar;";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        assertTrue(program.getStatements().get(0) instanceof Identifier);
+        final Identifier identifier = (Identifier) program.getStatements().get(0);
+        assertEquals(identifier.getValue(), "foobar");
+        assertEquals(identifier.tokenLiteral(), "foobar");
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
@@ -82,6 +98,10 @@ public class ParserTest {
         assertEquals("return", stmt.tokenLiteral());
         final ReturnStatement returnStmt = (ReturnStatement) stmt;
         assertEquals(expectedTokenLiteral, returnStmt.tokenLiteral());
+    }
+
+    private void checkParserErrors(final Parser p) {
+        assertEquals(p.getErrors(), 0);
     }
 
     private String readProgram(final String path) {

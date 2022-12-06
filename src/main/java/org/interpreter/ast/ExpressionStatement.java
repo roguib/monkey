@@ -24,4 +24,12 @@ public class ExpressionStatement implements Statement {
         }
         return "";
     }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
 }

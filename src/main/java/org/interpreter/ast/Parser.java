@@ -5,9 +5,15 @@ import org.interpreter.lexer.Token;
 import org.interpreter.lexer.TokenType;
 
 import javax.swing.plaf.nimbus.State;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Parser {
     private Lexer l;
+    private ArrayList<String> errors = new ArrayList<>();
+
+    private HashMap<TokenType, PrefixParse> prefixParseFns;
+    private HashMap<TokenType, InfixParse> infixParseFns;
     /**
      * curToken and peekToken act as a pointers as our lexer has:
      * position and peekPosition
@@ -48,7 +54,7 @@ public class Parser {
             case RETURN:
                 return parseReturnStatement();
             default:
-                return null;
+                return parseExpressionStatement();
         }
     }
 
@@ -86,6 +92,11 @@ public class Parser {
         return stmt;
     }
 
+    private Statement parseExpressionStatement() {
+        // TODO
+        return null;
+    }
+
     private boolean curTokenIs(TokenType t) {
         return curToken.getType() == t;
     }
@@ -101,5 +112,9 @@ public class Parser {
         } else {
             return false;
         }
+    }
+
+    public ArrayList<String> getErrors() {
+        return errors;
     }
 }
