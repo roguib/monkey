@@ -79,10 +79,10 @@ public class ParserTest {
         checkParserErrors(p);
 
         assertEquals(program.getStatements().size(), 1);
-        assertTrue(program.getStatements().get(0) instanceof Identifier);
-        final Identifier identifier = (Identifier) program.getStatements().get(0);
-        assertEquals(identifier.getValue(), "foobar");
-        assertEquals(identifier.tokenLiteral(), "foobar");
+        final ExpressionStatement exprstmt = (ExpressionStatement) program.getStatements().get(0);
+        final Identifier identifier = (Identifier) exprstmt.getExpression();
+        assertEquals(identifier.getValue(), "foovar");
+        assertEquals(identifier.tokenLiteral(), "foovar");
     }
 
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
@@ -101,7 +101,7 @@ public class ParserTest {
     }
 
     private void checkParserErrors(final Parser p) {
-        assertEquals(p.getErrors(), 0);
+        assertEquals(p.getErrors().size(), 0);
     }
 
     private String readProgram(final String path) {
