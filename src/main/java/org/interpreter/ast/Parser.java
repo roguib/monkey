@@ -22,6 +22,22 @@ class ParseIdentifier implements PrefixParse {
     }
 }
 
+class ParseIntegerLiteral implements PrefixParse {
+    @Override
+    public Expression prefixParse(final Token token) {
+        final IntegerLiteral lit = new IntegerLiteral(token);
+        try {
+            int value = Integer.parseInt(token.getLiteral());
+            lit.setValue(value);
+        } catch (NumberFormatException e) {
+            // TODO: fix this, we can't add errors in here
+            // errors.add("Couldn't parse " + token.getLiteral() + " as integer");
+            return null;
+        }
+        return lit;
+    }
+}
+
 public class Parser {
     private Lexer l;
     private ArrayList<String> errors = new ArrayList<>();
@@ -34,6 +50,7 @@ public class Parser {
     {
         // This would look much better with functional programming but we aren't there yet
         prefixParseFns.put(TokenType.IDENT, new ParseIdentifier());
+        prefixParseFns.put(TokenType.INT, new ParseIntegerLiteral());
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns;
@@ -148,6 +165,18 @@ public class Parser {
             return null;
         }
         return prefix.prefixParse(curToken);
+    }
+
+    private Expression parseIntegerLiteral() {
+        final IntegerLiteral lit = new IntegerLiteral(curToken);
+        try {
+            int value = Integer.parseInt(curToken.getLiteral());
+            lit.setValue(value);
+        } catch (NumberFormatException e) {
+            errors.add("Couldn't parse " + curToken.getLiteral() + " as integer");
+            return null;
+        }
+        return lit;
     }
 
     private boolean curTokenIs(TokenType t) {

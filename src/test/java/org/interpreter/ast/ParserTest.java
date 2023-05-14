@@ -85,6 +85,23 @@ public class ParserTest {
         assertEquals(identifier.tokenLiteral(), "foovar");
     }
 
+    @Test
+    public void testIntegerLiteralExpression() {
+        final String input = "5;";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final Statement s = program.getStatements().get(0);
+        assertTrue(s instanceof ExpressionStatement);
+        final IntegerLiteral literal = (IntegerLiteral) ((ExpressionStatement) s).getExpression();
+        assertTrue(literal instanceof IntegerLiteral);
+        assertEquals(literal.getValue(), 5);
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
