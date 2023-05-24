@@ -7,53 +7,9 @@ import org.interpreter.lexer.TokenType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * @note
- * The books uses functional programming concepts to store the parse function that
- * is associated with each token. Since we don't want to deal with lambdas right now
- * one solution is to implement a PrefixParse interface for every parse function
- * and call prefixParse every time
- */
-class ParseIdentifier implements PrefixParse {
-    // In the book the method is called parseIdentifier
-    @Override
-    public Expression prefixParse(final Token token) {
-        return new Identifier(token, token.getLiteral());
-    }
-}
-
-class ParseIntegerLiteral implements PrefixParse {
-    @Override
-    public Expression prefixParse(final Token token) {
-        final IntegerLiteral lit = new IntegerLiteral(token);
-        try {
-            int value = Integer.parseInt(token.getLiteral());
-            lit.setValue(value);
-        } catch (NumberFormatException e) {
-            // TODO: fix this, we can't add errors in here
-            // errors.add("Couldn't parse " + token.getLiteral() + " as integer");
-            return null;
-        }
-        return lit;
-    }
-}
-
 public class Parser {
     private Lexer l;
     private ArrayList<String> errors = new ArrayList<>();
-
-    /**
-     * maintains a map of <TokenType, PrefixParse> so given a TokenType
-     * we can retrieve it's parsing function
-     */
-    private HashMap<TokenType, PrefixParse> prefixParseFns = new HashMap<>();
-    {
-        // This would look much better with functional programming but we aren't there yet
-        prefixParseFns.put(TokenType.IDENT, new ParseIdentifier());
-        prefixParseFns.put(TokenType.INT, new ParseIntegerLiteral());
-    }
-
-    private HashMap<TokenType, InfixParse> infixParseFns;
 
     // establishes the precedence of each operator over the next one
     private HashMap<String, Integer> operationPrecedence = new HashMap<>();
@@ -67,6 +23,39 @@ public class Parser {
         operationPrecedence.put("PREFIX", 6); // -x or !x
         operationPrecedence.put("CALL", 7); // myFunction()
     }
+
+    /**
+     * maintains a map of <TokenType, PrefixParse> so given a TokenType
+     * we can retrieve it's parsing function
+     */
+    private HashMap<TokenType, PrefixParse> prefixParseFns = new HashMap<>();
+    {
+        // This would look much better with functional programming but we aren't there yet
+        prefixParseFns.put(TokenType.IDENT, (Token token) -> new Identifier(token, token.getLiteral()));
+        prefixParseFns.put(TokenType.INT, (Token token) -> {
+            final IntegerLiteral lit = new IntegerLiteral(token);
+            try {
+                int value = Integer.parseInt(token.getLiteral());
+                lit.setValue(value);
+            } catch (NumberFormatException e) {
+                errors.add("Couldn't parse " + token.getLiteral() + " as integer");
+                return null;
+            }
+            return lit;
+        });
+        final PrefixParse p = (Token token) -> {
+            PrefixExpression exp = new PrefixExpression(token, token.getLiteral());
+
+            nextToken();
+            exp.setRight(parseExpression(operationPrecedence.get("LOWEST")));
+            return exp;
+        };
+        prefixParseFns.put(TokenType.BANG, p);
+        prefixParseFns.put(TokenType.MINUS, p);
+    }
+
+    private HashMap<TokenType, InfixParse> infixParseFns;
+
     /**
      * curToken and peekToken act as a pointers as our lexer has:
      * position and peekPosition
@@ -162,6 +151,7 @@ public class Parser {
     private Expression parseExpression(int precedence) {
         final PrefixParse prefix = prefixParseFns.get(curToken.getType());
         if (prefix == null) {
+            errors.add("No prefix parse function found for " + curToken.getType());
             return null;
         }
         return prefix.prefixParse(curToken);

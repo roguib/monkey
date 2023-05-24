@@ -5,8 +5,10 @@ import org.interpreter.lexer.Token;
 import org.interpreter.lexer.TokenType;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,6 +104,37 @@ public class ParserTest {
         assertEquals(literal.getValue(), 5);
     }
 
+    private void testIntegerLiteral(Expression exp, int value) {
+        IntegerLiteral integ = (IntegerLiteral) exp;
+        assertEquals(integ.getValue(), value);
+        assertEquals(integ.getToken().getLiteral(), String.valueOf(value));
+    }
+
+    @Test
+    public void testParsePrefixExpressions() {
+        Lexer l = new Lexer("!5");
+        Parser p = new Parser(l);
+        Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        ExpressionStatement es = (ExpressionStatement) program.getStatements().get(0);
+        PrefixExpression exp = (PrefixExpression) es.getExpression();
+        assertEquals(exp.getOperator(), "!");
+        testIntegerLiteral(exp.getRight(), 5);
+
+        l = new Lexer("-15");
+        p = new Parser(l);
+        program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        es = (ExpressionStatement) program.getStatements().get(0);
+        exp = (PrefixExpression) es.getExpression();
+        assertEquals(exp.getOperator(), "-");
+        testIntegerLiteral(exp.getRight(), 15);
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
@@ -118,7 +151,9 @@ public class ParserTest {
     }
 
     private void checkParserErrors(final Parser p) {
-        assertEquals(p.getErrors().size(), 0);
+        final List<String> errors = p.getErrors();
+        errors.forEach(err -> System.out.println(err));
+        assertEquals(errors.size(), 0);
     }
 
     private String readProgram(final String path) {
