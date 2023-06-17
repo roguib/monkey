@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import javax.swing.plaf.nimbus.State;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -133,6 +135,91 @@ public class ParserTest {
         exp = (PrefixExpression) es.getExpression();
         assertEquals(exp.getOperator(), "-");
         testIntegerLiteral(exp.getRight(), 15);
+    }
+
+    @Test
+    public void testParseInfixExpressions() {
+        final String[] input = {
+                "5 + 5;",
+                "5 - 5",
+                "5 * 5",
+                "5 / 5",
+                "5 > 5",
+                "5 < 5",
+                "5 == 5",
+                "5 != 5"
+        };
+        final int[] leftValue = new int[8];
+        Arrays.fill(leftValue, 5);
+        final String[] operator = {
+                "+",
+                "-",
+                "*",
+                "/",
+                ">",
+                "<",
+                "==",
+                "!="
+        };
+        final int[] rightValue = new int[8];
+        Arrays.fill(rightValue, 5);
+
+        for(int i = 0; i < input.length; ++i) {
+            final Lexer l = new Lexer(input[i]);
+            final Parser p = new Parser(l);
+            final Program program = p.parseProgram();
+            checkParserErrors(p);
+
+            // contains exactly one statement
+            final ArrayList<Statement> statements = program.getStatements();
+            assertEquals(statements.size(), 1);
+            ExpressionStatement stmt = (ExpressionStatement) statements.get(0);
+            InfixExpression exp = (InfixExpression) stmt.getExpression();
+            testIntegerLiteral(exp.getLeft(), leftValue[i]);
+            assertEquals(exp.getOperator(), operator[i]);
+            testIntegerLiteral(exp.getRight(), rightValue[i]);
+        }
+    }
+
+    @Test
+    public void testOperatorPrecedence() {
+        final String[] input = {
+                "-a * b",
+                "!-a",
+                "a + b + c",
+                "a + b - c",
+                "a * b * c",
+                "a * b / c",
+                "a + b / c",
+                "a + b * c + d / e - f",
+                "3 + 4; -5 * 5",
+                "5 > 4 == 3 < 4",
+                "5 < 4 != 3 > 4",
+                "3 + 4 * 5 == 3 * 1 + 4 * 5",
+                "3 + 4 * 5 == 3 * 1 + 4 * 5",
+        };
+        final String[] expected = {
+                "((-a) * b)",
+                "(!(-a))",
+                "((a + b) + c)",
+                "((a + b) - c)",
+                "((a * b) * c)",
+                "((a * b) / c)",
+                "(a + (b / c))",
+                "(((a + (b * c)) + (d / e)) - f)",
+                "(3 + 4)((-5) * 5)",
+                "((5 > 4) == (3 < 4))",
+                "((5 < 4) != (3 > 4))",
+                "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+                "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+        };
+        for (int i = 0; i < input.length; ++i) {
+            final Lexer l = new Lexer(input[i]);
+            final Parser p = new Parser(l);
+            final Program program = p.parseProgram();
+            checkParserErrors(p);
+            assertEquals(program.toString(), expected[i]);
+        }
     }
 
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {

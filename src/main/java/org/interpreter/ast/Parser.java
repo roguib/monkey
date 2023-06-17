@@ -8,20 +8,45 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Parser {
+    /**
+     * curToken and peekToken act as a pointers as our lexer has:
+     * position and peekPosition
+     */
+    private Token curToken;
+    private Token peekToken;
     private Lexer l;
     private ArrayList<String> errors = new ArrayList<>();
 
-    // establishes the precedence of each operator over the next one
-    private HashMap<String, Integer> operationPrecedence = new HashMap<>();
+    // establishes the precedence of each operator over the next one by associating
+    // each token with their precedence
+    private enum operationPrecedence {
+        LOWEST(1),
+        EQUALS(2),
+        LESSGREATER(3),
+        SUM(4),
+        PRODUCT(5),
+        PREFIX(6),
+        CALL(7);
+
+        private final int value;
+        private operationPrecedence(int value) {
+            this.value = value;
+        }
+        public int getValue() {
+            return value;
+        }
+
+    };
+    private HashMap<TokenType, Integer> precedences = new HashMap<>();
     {
-        // TODO: should also be an enum like TokenType??
-        operationPrecedence.put("LOWEST", 1);
-        operationPrecedence.put("EQUALS", 2); // ==
-        operationPrecedence.put("LESSGREATER", 3); // > or <
-        operationPrecedence.put("SUM", 4); // +
-        operationPrecedence.put("PRODUCT", 5); // *
-        operationPrecedence.put("PREFIX", 6); // -x or !x
-        operationPrecedence.put("CALL", 7); // myFunction()
+        precedences.put(TokenType.EQ, operationPrecedence.EQUALS.getValue());
+        precedences.put(TokenType.NOT_EQ, operationPrecedence.EQUALS.getValue());
+        precedences.put(TokenType.LT, operationPrecedence.LESSGREATER.getValue());
+        precedences.put(TokenType.GT, operationPrecedence.LESSGREATER.getValue());
+        precedences.put(TokenType.PLUS, operationPrecedence.SUM.getValue());
+        precedences.put(TokenType.MINUS, operationPrecedence.SUM.getValue());
+        precedences.put(TokenType.SLASH, operationPrecedence.PRODUCT.getValue());
+        precedences.put(TokenType.ASTERISK, operationPrecedence.PRODUCT.getValue());
     }
 
     /**
@@ -30,7 +55,6 @@ public class Parser {
      */
     private HashMap<TokenType, PrefixParse> prefixParseFns = new HashMap<>();
     {
-        // This would look much better with functional programming but we aren't there yet
         prefixParseFns.put(TokenType.IDENT, (Token token) -> new Identifier(token, token.getLiteral()));
         prefixParseFns.put(TokenType.INT, (Token token) -> {
             final IntegerLiteral lit = new IntegerLiteral(token);
@@ -47,21 +71,33 @@ public class Parser {
             PrefixExpression exp = new PrefixExpression(token, token.getLiteral());
 
             nextToken();
-            exp.setRight(parseExpression(operationPrecedence.get("LOWEST")));
+            exp.setRight(parseExpression(operationPrecedence.PREFIX.getValue()));
             return exp;
         };
         prefixParseFns.put(TokenType.BANG, p);
         prefixParseFns.put(TokenType.MINUS, p);
     }
 
-    private HashMap<TokenType, InfixParse> infixParseFns;
+    private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
+    {
+        final InfixParse p = (Expression left) -> {
+            final InfixExpression infixExp = new InfixExpression(curToken, curToken.getLiteral(), left);
+            final int precedence = curPrecedence();
+            nextToken();
+            infixExp.setRight(parseExpression(precedence));
 
-    /**
-     * curToken and peekToken act as a pointers as our lexer has:
-     * position and peekPosition
-     */
-    private Token curToken;
-    private Token peekToken;
+            return infixExp;
+        };
+
+        infixParseFns.put(TokenType.PLUS, p);
+        infixParseFns.put(TokenType.MINUS, p);
+        infixParseFns.put(TokenType.SLASH, p);
+        infixParseFns.put(TokenType.ASTERISK, p);
+        infixParseFns.put(TokenType.EQ, p);
+        infixParseFns.put(TokenType.NOT_EQ, p);
+        infixParseFns.put(TokenType.LT, p);
+        infixParseFns.put(TokenType.GT, p);
+    }
 
     public Parser(final Lexer l) {
         this.l = l;
@@ -137,7 +173,7 @@ public class Parser {
     private Statement parseExpressionStatement() {
         Statement stmt = new ExpressionStatement(
             curToken,
-            parseExpression(operationPrecedence.get("LOWEST"))
+            parseExpression(operationPrecedence.LOWEST.getValue())
         );
 
         // check for optional semicolon
@@ -154,7 +190,20 @@ public class Parser {
             errors.add("No prefix parse function found for " + curToken.getType());
             return null;
         }
-        return prefix.prefixParse(curToken);
+
+        Expression leftExp = prefix.prefixParse(curToken);
+
+        while (!peekTokenIs(TokenType.SEMICOLON) && precedence < peekPrecedence()) {
+            InfixParse infix = infixParseFns.get(peekToken.getType());
+            if (infix == null) {
+                return leftExp;
+            }
+            nextToken();
+
+            leftExp = infix.infixParse(leftExp);
+        }
+
+        return leftExp;
     }
 
     private Expression parseIntegerLiteral() {
@@ -184,6 +233,20 @@ public class Parser {
         } else {
             return false;
         }
+    }
+
+    private int peekPrecedence() {
+        if (precedences.containsKey(peekToken.getType())) {
+            return precedences.get(peekToken.getType());
+        }
+        return operationPrecedence.LOWEST.getValue();
+    }
+
+    private int curPrecedence() {
+        if (precedences.containsKey(curToken.getType())) {
+            return precedences.get(curToken.getType());
+        }
+        return operationPrecedence.LOWEST.getValue();
     }
 
     public ArrayList<String> getErrors() {
