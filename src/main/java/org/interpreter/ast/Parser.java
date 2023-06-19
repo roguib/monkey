@@ -79,6 +79,16 @@ public class Parser {
         final PrefixParse b = (Token token) -> new Boolean(curToken, curTokenIs(TokenType.TRUE));
         prefixParseFns.put(TokenType.TRUE, b);
         prefixParseFns.put(TokenType.FALSE, b);
+
+        final PrefixParse paren = (Token token) -> {
+            nextToken();
+            Expression exp = parseExpression(operationPrecedence.LOWEST.getValue());
+            if (!expectPeek(TokenType.RPAREN)) {
+                return null;
+            }
+            return exp;
+        };
+        prefixParseFns.put(TokenType.LPAREN, paren);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();

@@ -299,6 +299,11 @@ public class ParserTest {
                 "true",
                 "false",
                 "3 > 5 == false",
+                "3 < 5 == true",
+                "1 + (2 + 3) + 4",
+                "(5 + 5) * 2",
+                "2 / (5 + 5)",
+                "-(5 + 5)",
         };
         final String[] expected = {
                 "((-a) * b)",
@@ -317,8 +322,11 @@ public class ParserTest {
                 "true",
                 "false",
                 "((3 > 5) == false)",
-                "3 < 5 == true",
                 "((3 < 5) == true)",
+                "((1 + (2 + 3)) + 4)",
+                "((5 + 5) * 2)",
+                "(2 / (5 + 5))",
+                "(-(5 + 5))",
         };
         for (int i = 0; i < input.length; ++i) {
             final Lexer l = new Lexer(input[i]);
