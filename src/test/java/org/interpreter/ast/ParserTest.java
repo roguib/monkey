@@ -5,7 +5,6 @@ import org.interpreter.lexer.Token;
 import org.interpreter.lexer.TokenType;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.nimbus.State;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -90,6 +89,38 @@ public class ParserTest {
     }
 
     @Test
+    public void testBooleanFalseLiteralExpression() {
+        final String input = "false;";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final Statement s = program.getStatements().get(0);
+        final Boolean bool = (Boolean) ((ExpressionStatement) s).getExpression();
+        assertTrue(bool != null);
+        assertEquals(bool.getValue(), false);
+    }
+
+    @Test
+    public void testBooleanTrueLiteralExpression() {
+        final String input = "true;";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final Statement s = program.getStatements().get(0);
+        final Boolean bool = (Boolean) ((ExpressionStatement) s).getExpression();
+        assertTrue(bool != null);
+        assertEquals(bool.getValue(), true);
+    }
+
+    @Test
     public void testIntegerLiteralExpression() {
         final String input = "5;";
 
@@ -110,6 +141,35 @@ public class ParserTest {
         IntegerLiteral integ = (IntegerLiteral) exp;
         assertEquals(integ.getValue(), value);
         assertEquals(integ.getToken().getLiteral(), String.valueOf(value));
+    }
+
+    private void testIdentifier(Expression exp, String value) {
+        final Identifier ident = (Identifier) exp;
+        assertEquals(ident.getValue(), value);
+        assertEquals(ident.tokenLiteral(), value);
+    }
+
+    private void testBooleanLiteral(Expression exp, java.lang.Boolean value) {
+        final Boolean bool = (Boolean) exp;
+        assertEquals(bool.getValue(), value);
+        assertEquals(bool.tokenLiteral(), String.valueOf(value));
+    }
+
+    private void testLiteralExpression(Expression exp, Object expected) {
+        if (expected instanceof Integer) {
+            testIntegerLiteral(exp, (Integer) expected);
+        } else if (expected instanceof String) {
+            testIdentifier(exp, (String) expected);
+        } else if (expected instanceof java.lang.Boolean) {
+            testBooleanLiteral(exp, (java.lang.Boolean) expected);
+        }
+    }
+
+    private void testInfixExpression(Expression exp, Object left, String operator, Object right) {
+        final InfixExpression opExp = (InfixExpression) exp;
+        testLiteralExpression(opExp.getLeft(), left);
+        assertEquals(opExp.getOperator(), operator);
+        testLiteralExpression(opExp.getRight(), right);
     }
 
     @Test
@@ -135,6 +195,17 @@ public class ParserTest {
         exp = (PrefixExpression) es.getExpression();
         assertEquals(exp.getOperator(), "-");
         testIntegerLiteral(exp.getRight(), 15);
+
+        l = new Lexer("!true");
+        p = new Parser(l);
+        program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        es = (ExpressionStatement) program.getStatements().get(0);
+        exp = (PrefixExpression) es.getExpression();
+        assertEquals(exp.getOperator(), "!");
+        testBooleanLiteral(exp.getRight(), true);
     }
 
     @Test
@@ -147,10 +218,24 @@ public class ParserTest {
                 "5 > 5",
                 "5 < 5",
                 "5 == 5",
-                "5 != 5"
+                "5 != 5",
+                "true == true",
+                "true != false",
+                "false == false",
         };
-        final int[] leftValue = new int[8];
-        Arrays.fill(leftValue, 5);
+        final Object[] leftValue = {
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                true,
+                true,
+                false
+        };
         final String[] operator = {
                 "+",
                 "-",
@@ -159,10 +244,24 @@ public class ParserTest {
                 ">",
                 "<",
                 "==",
-                "!="
+                "!=",
+                "==",
+                "!=",
+                "=="
         };
-        final int[] rightValue = new int[8];
-        Arrays.fill(rightValue, 5);
+        final Object[] rightValue = {
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                5,
+                true,
+                false,
+                false
+        };
 
         for(int i = 0; i < input.length; ++i) {
             final Lexer l = new Lexer(input[i]);
@@ -175,9 +274,9 @@ public class ParserTest {
             assertEquals(statements.size(), 1);
             ExpressionStatement stmt = (ExpressionStatement) statements.get(0);
             InfixExpression exp = (InfixExpression) stmt.getExpression();
-            testIntegerLiteral(exp.getLeft(), leftValue[i]);
+            testLiteralExpression(exp.getLeft(), leftValue[i]);
             assertEquals(exp.getOperator(), operator[i]);
-            testIntegerLiteral(exp.getRight(), rightValue[i]);
+            testLiteralExpression(exp.getRight(), rightValue[i]);
         }
     }
 
@@ -197,6 +296,9 @@ public class ParserTest {
                 "5 < 4 != 3 > 4",
                 "3 + 4 * 5 == 3 * 1 + 4 * 5",
                 "3 + 4 * 5 == 3 * 1 + 4 * 5",
+                "true",
+                "false",
+                "3 > 5 == false",
         };
         final String[] expected = {
                 "((-a) * b)",
@@ -212,6 +314,11 @@ public class ParserTest {
                 "((5 < 4) != (3 > 4))",
                 "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
                 "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+                "true",
+                "false",
+                "((3 > 5) == false)",
+                "3 < 5 == true",
+                "((3 < 5) == true)",
         };
         for (int i = 0; i < input.length; ++i) {
             final Lexer l = new Lexer(input[i]);

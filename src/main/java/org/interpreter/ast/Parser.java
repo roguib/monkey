@@ -76,6 +76,9 @@ public class Parser {
         };
         prefixParseFns.put(TokenType.BANG, p);
         prefixParseFns.put(TokenType.MINUS, p);
+        final PrefixParse b = (Token token) -> new Boolean(curToken, curTokenIs(TokenType.TRUE));
+        prefixParseFns.put(TokenType.TRUE, b);
+        prefixParseFns.put(TokenType.FALSE, b);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
