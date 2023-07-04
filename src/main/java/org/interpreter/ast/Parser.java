@@ -89,6 +89,41 @@ public class Parser {
             return exp;
         };
         prefixParseFns.put(TokenType.LPAREN, paren);
+
+        final PrefixParse ifElse = (Token token) -> {
+            IfExpression exp = new IfExpression(curToken);
+
+            if (!expectPeek(TokenType.LPAREN)) {
+                return null;
+            }
+
+            nextToken();
+
+            exp.setCondition(parseExpression(operationPrecedence.LOWEST.getValue()));
+
+            if (!expectPeek(TokenType.RPAREN)) {
+                return null;
+            }
+
+            if (!expectPeek(TokenType.LBRACE)) {
+                return null;
+            }
+
+            exp.setConsequence(parseBlockStatement());
+
+            if (peekTokenIs(TokenType.ELSE)) {
+                nextToken();
+
+                if (!expectPeek(TokenType.LBRACE)) {
+                    return null;
+                }
+
+                exp.setAlternative(parseBlockStatement());
+            }
+
+            return exp;
+        };
+        prefixParseFns.put(TokenType.IF, ifElse);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
@@ -229,6 +264,24 @@ public class Parser {
             return null;
         }
         return lit;
+    }
+
+    private BlockStatement parseBlockStatement() {
+        BlockStatement block = new BlockStatement(curToken);
+
+        nextToken();
+
+        ArrayList<Statement> statements = new ArrayList<>();
+        while (!curTokenIs(TokenType.RBRACE) && !curTokenIs(TokenType.EOF)) {
+            Statement stmt = parseStatement();
+            if (stmt != null) {
+                statements.add(stmt);
+            }
+            nextToken();
+        }
+
+        block.setStatements(statements.toArray(new Statement[statements.size()]));
+        return block;
     }
 
     private boolean curTokenIs(TokenType t) {

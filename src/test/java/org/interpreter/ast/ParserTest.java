@@ -337,6 +337,46 @@ public class ParserTest {
         }
     }
 
+    @Test
+    public void testIfExpression() {
+        final String input = "if (x < y) { x }";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final IfExpression exp = (IfExpression) stmt.getExpression();
+        testInfixExpression(exp.getCondition(), "x", "<", "y");
+        assertEquals(exp.getConsequence().getStatements().length, 1);
+        ExpressionStatement consequence = (ExpressionStatement) exp.getConsequence().getStatements()[0];
+        testIdentifier(consequence.getExpression(), "x");
+        assertNull(exp.getAlternative());
+    }
+
+    @Test
+    public void testIfElseExpression() {
+        final String input = "if (x < y) { x } else { y }";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final IfExpression exp = (IfExpression) stmt.getExpression();
+        testInfixExpression(exp.getCondition(), "x", "<", "y");
+        assertEquals(exp.getConsequence().getStatements().length, 1);
+        ExpressionStatement consequence = (ExpressionStatement) exp.getConsequence().getStatements()[0];
+        testIdentifier(consequence.getExpression(), "x");
+        assertNotNull(exp.getAlternative());
+        ExpressionStatement alternative = (ExpressionStatement) exp.getAlternative().getStatements()[0];
+        testIdentifier(alternative.getExpression(), "y");
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
