@@ -304,6 +304,9 @@ public class ParserTest {
                 "(5 + 5) * 2",
                 "2 / (5 + 5)",
                 "-(5 + 5)",
+                "a + add(b * c) + d",
+                "add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))",
+                "add(a + b + c * d / f + g)",
         };
         final String[] expected = {
                 "((-a) * b)",
@@ -327,6 +330,9 @@ public class ParserTest {
                 "((5 + 5) * 2)",
                 "(2 / (5 + 5))",
                 "(-(5 + 5))",
+                "((a + add((b * c))) + d)",
+                "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))",
+                "add((((a + b) + ((c * d) / f)) + g))",
         };
         for (int i = 0; i < input.length; ++i) {
             final Lexer l = new Lexer(input[i]);
@@ -428,6 +434,28 @@ public class ParserTest {
                 testLiteralExpression(function.getParameters()[ii], expectedParams[ii]);
             }
         }
+    }
+
+    @Test
+    public void testCallExpression() {
+        final String input = "add(1, 2 * 3, 4 + 5);";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        CallExpression exp = (CallExpression) stmt.getExpression();
+        testIdentifier(exp.getFunction(), "add");
+
+        final Expression[] fnArg = exp.getArguments();
+        assertEquals(fnArg.length, 3);
+
+        testLiteralExpression(fnArg[0], 1);
+        testInfixExpression(fnArg[1], 2, "*", 3);
+        testInfixExpression(fnArg[2], 4, "+", 5);
     }
 
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {

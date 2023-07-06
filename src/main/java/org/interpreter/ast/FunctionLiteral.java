@@ -25,7 +25,7 @@ public class FunctionLiteral implements Expression {
 
     @Override
     public String tokenLiteral() {
-        return null;
+        return token.getLiteral();
     }
 
     public Identifier[] getParameters() {
@@ -50,6 +50,9 @@ public class FunctionLiteral implements Expression {
         for (final Identifier ident: parameters) {
             params.add(ident.toString());
         }
-        return token.getLiteral() + "(" + params.toString() + ") " + body.toString();
+        StringBuilder sb = new StringBuilder();
+        params.forEach(param -> sb.append(param));
+
+        return token.getLiteral() + "(" + sb.toString() + ") " + body.toString();
     }
 }

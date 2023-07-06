@@ -47,6 +47,7 @@ public class Parser {
         precedences.put(TokenType.MINUS, operationPrecedence.SUM.getValue());
         precedences.put(TokenType.SLASH, operationPrecedence.PRODUCT.getValue());
         precedences.put(TokenType.ASTERISK, operationPrecedence.PRODUCT.getValue());
+        precedences.put(TokenType.LPAREN, operationPrecedence.CALL.getValue());
     }
 
     /**
@@ -156,6 +157,12 @@ public class Parser {
             return infixExp;
         };
 
+        final InfixParse fnCall = (Expression function) -> {
+            CallExpression exp = new CallExpression(curToken, function);
+            exp.setArguments(parseCallArguments());
+            return exp;
+        };
+
         infixParseFns.put(TokenType.PLUS, p);
         infixParseFns.put(TokenType.MINUS, p);
         infixParseFns.put(TokenType.SLASH, p);
@@ -164,6 +171,7 @@ public class Parser {
         infixParseFns.put(TokenType.NOT_EQ, p);
         infixParseFns.put(TokenType.LT, p);
         infixParseFns.put(TokenType.GT, p);
+        infixParseFns.put(TokenType.LPAREN, fnCall);
     }
 
     public Parser(final Lexer l) {
@@ -325,6 +333,30 @@ public class Parser {
         }
 
         return identifiers.toArray(new Identifier[identifiers.size()]);
+    }
+
+    protected Expression[] parseCallArguments() {
+        ArrayList<Expression> args = new ArrayList<>();
+
+        if (peekTokenIs(TokenType.RPAREN)) {
+            nextToken();
+            return args.toArray(new Expression[0]);
+        }
+
+        nextToken();
+        args.add(parseExpression(operationPrecedence.LOWEST.getValue()));
+
+        while(peekTokenIs(TokenType.COMMA)) {
+            nextToken();
+            nextToken();
+            args.add(parseExpression(operationPrecedence.LOWEST.getValue()));
+        }
+
+        if (!expectPeek(TokenType.RPAREN)) {
+            return null;
+        }
+
+        return args.toArray(new Expression[args.size()]);
     }
 
     private boolean curTokenIs(TokenType t) {
