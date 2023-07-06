@@ -124,6 +124,25 @@ public class Parser {
             return exp;
         };
         prefixParseFns.put(TokenType.IF, ifElse);
+
+        final PrefixParse function = (Token token) -> {
+            FunctionLiteral fnLit = new FunctionLiteral(token);
+
+            if (!expectPeek(TokenType.LPAREN)) {
+                return null;
+            }
+
+            fnLit.setParameters(parseFunctionParameters());
+
+            if (!expectPeek(TokenType.LBRACE)) {
+                return null;
+            }
+
+            fnLit.setBody(parseBlockStatement());
+
+            return fnLit;
+        };
+        prefixParseFns.put(TokenType.FUNCTION, function);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
@@ -282,6 +301,30 @@ public class Parser {
 
         block.setStatements(statements.toArray(new Statement[statements.size()]));
         return block;
+    }
+
+    protected Identifier[] parseFunctionParameters() {
+        ArrayList<Identifier> identifiers = new ArrayList<>();
+
+        if (peekTokenIs(TokenType.RPAREN)) {
+            nextToken();
+            return identifiers.toArray(new Identifier[0]);
+        }
+
+        nextToken();
+
+        identifiers.add(new Identifier(curToken, curToken.getLiteral()));
+        while (peekTokenIs(TokenType.COMMA)) {
+            nextToken();
+            nextToken();
+            identifiers.add(new Identifier(curToken, curToken.getLiteral()));
+        }
+
+        if (!expectPeek(TokenType.RPAREN)) {
+            return null;
+        }
+
+        return identifiers.toArray(new Identifier[identifiers.size()]);
     }
 
     private boolean curTokenIs(TokenType t) {

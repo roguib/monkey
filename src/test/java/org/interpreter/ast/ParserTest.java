@@ -377,6 +377,59 @@ public class ParserTest {
         testIdentifier(alternative.getExpression(), "y");
     }
 
+    @Test
+    public void testFunctionLiteral() {
+        final String input = "fn(x, y) { x + y }";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        assertEquals(program.getStatements().size(), 1);
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final FunctionLiteral function = (FunctionLiteral) stmt.getExpression();
+
+        final Identifier[] params = function.getParameters();
+        assertEquals(params.length, 2);
+        testLiteralExpression(params[0], "x");
+        testLiteralExpression(params[1], "y");
+
+        final Statement[] bodyStatements = function.getBody().getStatements();
+        assertEquals(bodyStatements.length, 1);
+        final ExpressionStatement bodyStmt = (ExpressionStatement) bodyStatements[0];
+        testInfixExpression(bodyStmt.getExpression(), "x", "+", "y");
+    }
+
+    @Test
+    public void testFunctionParameters() {
+        final String[] input = {
+                "fn () {};",
+                "fn(x) {};",
+                "fn(x, y, z) {};"
+        };
+        final String[][] expectedParams = {
+                new String[0],
+                new String[]{ "x" },
+                new String[]{ "x", "y", "z" },
+        };
+
+        for (int i = 0; i < input.length; ++i) {
+            final Lexer l = new Lexer(input[i]);
+            final Parser p = new Parser(l);
+            final Program program = p.parseProgram();
+            checkParserErrors(p);
+
+            ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+            FunctionLiteral function = (FunctionLiteral) stmt.getExpression();
+            assertEquals(function.getParameters().length, expectedParams[i].length);
+
+            for(int ii = 0; ii < expectedParams[i].length; ++ii) {
+                testLiteralExpression(function.getParameters()[ii], expectedParams[ii]);
+            }
+        }
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
