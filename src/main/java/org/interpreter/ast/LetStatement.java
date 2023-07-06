@@ -45,6 +45,14 @@ public class LetStatement implements Statement {
         this.name = name;
     }
 
+    public Expression getValue() {
+        return value;
+    }
+
+    public void setValue(Expression value) {
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(token.getLiteral() + " " + name.toString() + " = ");

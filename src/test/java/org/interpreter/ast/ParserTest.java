@@ -17,36 +17,64 @@ public class ParserTest {
 
     @Test
     public void testLetStatements() {
-        final String input = readProgram("src/test/resources/fixtures/let-statements.monkey");
-        // no stub to simplify the test
-        final Lexer l = new Lexer(input);
-        final Parser p = new Parser(l);
+        final String[] input = {
+                "let x = 5;",
+                "let y = true;",
+                "let foobar = y;",
+        };
+        final String[] expectedIdentifier = {
+                "x",
+                "y",
+                "foobar",
+        };
+        final Object[] expectedValue = {
+                5,
+                true,
+                "y",
+        };
 
-        final Program program = p.parseProgram();
-        assertNotNull(program);
-        assertEquals(program.getStatements().size(), 3);
+        for (int i = 0; i < input.length; ++i) {
+            final Lexer l = new Lexer(input[i]);
+            final Parser p = new Parser(l);
+            final Program program = p.parseProgram();
+            checkParserErrors(p);
+            ArrayList<Statement> stmts = program.getStatements();
+            assertEquals(stmts.size(), 1);
+            final Statement stmt = stmts.get(0);
 
-        final String[] tests = { "x", "y", "foobar" };
-        for (int i = 0; i < tests.length; ++i) {
-            final Statement stmt = program.getStatements().get(i);
-            testLetStatement(stmt, tests[i]);
+            testLetStatement(stmt, expectedIdentifier[i]);
+
+            LetStatement letStmt = (LetStatement) stmt;
+            testLiteralExpression(letStmt.getValue(), expectedValue[i]);
         }
     }
 
     @Test
     public void testReturnStatements() {
-        final String input = readProgram("src/test/resources/fixtures/return-statements.monkey");
-        // no stub to simplify the test
-        final Lexer l = new Lexer(input);
-        final Parser p = new Parser(l);
+        final String[] input = {
+                "return 5;",
+                "return 10;",
+                "return 993322;",
+        };
+        final Object[] expectedValue = {
+                5,
+                10,
+                993322
+        };
 
-        final Program program = p.parseProgram();
-        assertNotNull(program);
-        assertEquals(program.getStatements().size(), 3);
+        for (int i = 0; i < input.length; ++i) {
+            final Lexer l = new Lexer(input[i]);
+            final Parser p = new Parser(l);
+            final Program program = p.parseProgram();
+            checkParserErrors(p);
+            ArrayList<Statement> stmts = program.getStatements();
+            assertEquals(stmts.size(), 1);
+            final Statement stmt = stmts.get(0);
 
-        for (int i = 0; i < program.getStatements().size(); ++i) {
-            final Statement stmt = program.getStatements().get(i);
             testReturnStatement(stmt, "return");
+
+            ReturnStatement returnStmt = (ReturnStatement) stmt;
+            testLiteralExpression(returnStmt.getReturnValue(), expectedValue[i]);
         }
     }
 

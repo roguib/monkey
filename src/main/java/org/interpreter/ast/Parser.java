@@ -224,8 +224,11 @@ public class Parser {
             return null;
         }
 
-        // TODO: Skipping expressions until we encounter semicolon
-        while (!curTokenIs(TokenType.SEMICOLON)) {
+        nextToken();
+
+        stmt.setValue(parseExpression(operationPrecedence.LOWEST.getValue()));
+
+        if (peekTokenIs(TokenType.SEMICOLON)) {
             nextToken();
         }
 
@@ -237,8 +240,9 @@ public class Parser {
 
         nextToken();
 
-        // TODO: Skipping expressions until we encounter semicolon
-        while (!curTokenIs(TokenType.SEMICOLON)) {
+        stmt.setReturnValue(parseExpression(operationPrecedence.LOWEST.getValue()));
+
+        if (peekTokenIs(TokenType.SEMICOLON)) {
             nextToken();
         }
 

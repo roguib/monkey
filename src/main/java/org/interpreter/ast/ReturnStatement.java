@@ -25,6 +25,14 @@ public class ReturnStatement implements Statement {
 
     }
 
+    public Expression getReturnValue() {
+        return returnValue;
+    }
+
+    public void setReturnValue(Expression returnValue) {
+        this.returnValue = returnValue;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(token.getLiteral() + " ");
