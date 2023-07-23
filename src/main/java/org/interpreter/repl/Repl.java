@@ -1,5 +1,7 @@
 package org.interpreter.repl;
 
+import org.interpreter.ast.Parser;
+import org.interpreter.ast.Program;
 import org.interpreter.lexer.Lexer;
 import org.interpreter.lexer.Token;
 import org.interpreter.lexer.TokenType;
@@ -24,11 +26,22 @@ final public class Repl {
         while(true) {
             final String line = scanner.nextLine();
             final Lexer lexer = new Lexer(line);
-            Token token;
+            final Parser parser = new Parser(lexer);
+            final Program program = parser.parseProgram();
+            if (parser.getErrors().size() > 0) {
+                System.out.println("One or more errors have occurred while parsing the program.");
+                System.out.println("Aborting");
+                // TODO: Better report parsing errors check p.102
+                continue;
+            }
+
+            /** Token token;
             do {
                 token = lexer.nextToken();
                 System.out.println(token);
-            } while (!token.equals(new Token(TokenType.EOF, "")));
+            } while (!token.equals(new Token(TokenType.EOF, ""))); */
+
+            System.out.println(program);
             System.out.print(PROMPT);
         }
     }
