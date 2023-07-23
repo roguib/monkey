@@ -1,12 +1,12 @@
 package org.interpreter.evaluator;
 
-public class Null implements Object {
+public class MNull implements MObject {
 
     final private String value = "null";
 
     @Override
-    public ObjectType type() {
-        return ObjectType.NULL;
+    public MObjectType type() {
+        return MObjectType.NULL;
     }
 
     @Override

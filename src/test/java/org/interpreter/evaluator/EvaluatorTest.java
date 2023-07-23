@@ -16,12 +16,12 @@ public class EvaluatorTest {
 
         assertEquals(input.length, expected.length);
         for(int i = 0; i < input.length; ++i) {
-            final org.interpreter.evaluator.Object evaluated = testEval(input[i]);
+            final MObject evaluated = testEval(input[i]);
             testIntegerObject(evaluated, expected[i]);
         }
     }
 
-    private org.interpreter.evaluator.Object testEval(final String input) {
+    private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);
         final Program program = parser.parseProgram();
@@ -29,8 +29,8 @@ public class EvaluatorTest {
         return Evaluator.eval(program);
     }
 
-    private void testIntegerObject(final org.interpreter.evaluator.Object obj, int expected) {
-        final org.interpreter.evaluator.Integer result = (org.interpreter.evaluator.Integer) obj;
+    private void testIntegerObject(final MObject obj, int expected) {
+        final MInteger result = (MInteger) obj;
         assertEquals(result.getValue(), expected);
     }
 }

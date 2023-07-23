@@ -1,6 +1,6 @@
 package org.interpreter.evaluator;
 
-public enum ObjectType {
+public enum MObjectType {
     INTEGER,
     BOOLEAN,
     NULL,

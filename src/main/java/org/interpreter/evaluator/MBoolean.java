@@ -1,12 +1,12 @@
 package org.interpreter.evaluator;
 
-public class Boolean implements Object {
+public class MBoolean implements MObject {
 
     private boolean value;
 
     @Override
-    public ObjectType type() {
-        return ObjectType.BOOLEAN;
+    public MObjectType type() {
+        return MObjectType.BOOLEAN;
     }
 
     @Override

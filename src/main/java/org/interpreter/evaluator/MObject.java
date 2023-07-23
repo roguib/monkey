@@ -1,6 +1,6 @@
 package org.interpreter.evaluator;
 
-public interface Object {
-    ObjectType type();
+public interface MObject {
+    MObjectType type();
     String inspect();
 }

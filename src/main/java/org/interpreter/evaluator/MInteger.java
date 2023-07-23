@@ -1,16 +1,16 @@
 package org.interpreter.evaluator;
 
-public class Integer implements Object {
+public class MInteger implements MObject {
 
     private int value;
 
-    public Integer(final int value) {
+    public MInteger(final int value) {
         this.value = value;
     }
 
     @Override
-    public ObjectType type() {
-        return ObjectType.INTEGER;
+    public MObjectType type() {
+        return MObjectType.INTEGER;
     }
 
     @Override

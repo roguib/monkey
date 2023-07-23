@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Evaluator {
     
-    public static org.interpreter.evaluator.Object eval(Node node) {
+    public static MObject eval(Node node) {
         if (node instanceof Program) {
             return evalStatements(((Program) node).getStatements());
         }
@@ -14,13 +14,13 @@ public class Evaluator {
             return eval(((ExpressionStatement) node).getExpression());
         }
         else if (node instanceof IntegerLiteral) {
-            return new org.interpreter.evaluator.Integer(((IntegerLiteral) node).getValue());
+            return new MInteger(((IntegerLiteral) node).getValue());
         }
         return null;
     }
     
-    private static org.interpreter.evaluator.Object evalStatements(final ArrayList<Statement> stmts) {
-        org.interpreter.evaluator.Object result = null;
+    private static MObject evalStatements(final ArrayList<Statement> stmts) {
+        MObject result = null;
         
         for (int i = 0; i < stmts.size(); ++i) {
             result = eval(stmts.get(i));
