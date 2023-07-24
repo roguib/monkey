@@ -2,6 +2,8 @@ package org.interpreter.repl;
 
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
+import org.interpreter.evaluator.Evaluator;
+import org.interpreter.evaluator.MObject;
 import org.interpreter.lexer.Lexer;
 import org.interpreter.lexer.Token;
 import org.interpreter.lexer.TokenType;
@@ -28,6 +30,7 @@ final public class Repl {
             final Lexer lexer = new Lexer(line);
             final Parser parser = new Parser(lexer);
             final Program program = parser.parseProgram();
+
             if (parser.getErrors().size() > 0) {
                 System.out.println("One or more errors have occurred while parsing the program.");
                 System.out.println("Aborting");
@@ -35,13 +38,11 @@ final public class Repl {
                 continue;
             }
 
-            /** Token token;
-            do {
-                token = lexer.nextToken();
-                System.out.println(token);
-            } while (!token.equals(new Token(TokenType.EOF, ""))); */
+            MObject evaluated = Evaluator.eval(program);
+            if (evaluated != null) {
+                System.out.println(evaluated.inspect());
+            }
 
-            System.out.println(program);
             System.out.print(PROMPT);
         }
     }
