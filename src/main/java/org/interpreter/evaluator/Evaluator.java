@@ -9,6 +9,7 @@ public class Evaluator {
 
     private static final MBoolean TRUE = new MBoolean(true);
     private static final MBoolean FALSE = new MBoolean(false);
+    private static final MNull NULL = new MNull();
     
     public static MObject eval(Node node) {
         if (node instanceof Program) {
