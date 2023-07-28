@@ -21,6 +21,18 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testEvalBooleanExpression() {
+        final String[] input = { "true", "false" };
+        final boolean[] expected = { true, false };
+
+        assertEquals(input.length, expected.length);
+        for(int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            testBooleanObject(evaluated, expected[i]);
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);
@@ -31,6 +43,11 @@ public class EvaluatorTest {
 
     private void testIntegerObject(final MObject obj, int expected) {
         final MInteger result = (MInteger) obj;
+        assertEquals(result.getValue(), expected);
+    }
+
+    private void testBooleanObject(final MObject obj, boolean expected) {
+        final MBoolean result = (MBoolean) obj;
         assertEquals(result.getValue(), expected);
     }
 }
