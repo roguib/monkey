@@ -33,6 +33,31 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testBangOperator() {
+        final String[] input = {
+                "!true",
+                "!false",
+                "!5", // !5 acts as truthy value
+                "!!true",
+                "!!false",
+                "!!5",
+        };
+        final boolean[] expected = {
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            testBooleanObject(evaluated, expected[i]);
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);

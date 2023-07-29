@@ -24,6 +24,11 @@ public class Evaluator {
         else if (node instanceof Boolean) {
             return nativeBoolToBooleanObject(((Boolean) node).getValue());
         }
+        else if (node instanceof PrefixExpression) {
+            // right might be MInteger or MBoolean
+            final MObject right = eval(((PrefixExpression) node).getRight());
+            return evalPrefixExpression(((PrefixExpression) node).getOperator(), right);
+        }
         return null;
     }
     
@@ -39,6 +44,26 @@ public class Evaluator {
 
     private static MBoolean nativeBoolToBooleanObject(boolean value) {
         if (value) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    private static MObject evalPrefixExpression(final String operator, final MObject right) {
+        if ("!".equals(operator)) {
+            return evalBangOperatorExpression(right);
+        }
+        return NULL;
+    }
+
+    private static MObject evalBangOperatorExpression(final MObject right) {
+        if (right == TRUE) {
+            return FALSE;
+        }
+        else if (right == FALSE) {
+            return TRUE;
+        }
+        else if (right == NULL) {
             return TRUE;
         }
         return FALSE;
