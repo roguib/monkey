@@ -9,10 +9,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
 
+    // For now we only support "-" arithmetic operator
     @Test
     public void testEvalIntegerExpression() {
-        final String[] input = { "5", "10" };
-        final int[] expected = { 5, 10 };
+        final String[] input = {
+                "5",
+                "10",
+                "-5",
+                "-10",
+        };
+        final int[] expected = {
+                5,
+                10,
+                -5,
+                -10,
+        };
 
         assertEquals(input.length, expected.length);
         for(int i = 0; i < input.length; ++i) {

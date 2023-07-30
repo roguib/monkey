@@ -53,6 +53,9 @@ public class Evaluator {
         if ("!".equals(operator)) {
             return evalBangOperatorExpression(right);
         }
+        else if ("-".equals(operator)) {
+            return evalMinusPrefixOperatorExpression(right);
+        }
         return NULL;
     }
 
@@ -67,5 +70,10 @@ public class Evaluator {
             return TRUE;
         }
         return FALSE;
+    }
+
+    private static MObject evalMinusPrefixOperatorExpression(final MObject right) {
+        final int value = ((MInteger)right).getValue();
+        return new MInteger(-value);
     }
 }
