@@ -131,6 +131,38 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testIfElseExpressions() {
+        // everything truthy (not false and not null) will make the if branch to be evaluated
+        final String[] input = {
+                "if (true) { 10 }",
+                "if (false) { 10 }",
+                "if (1) { 10 }", // !5 acts as truthy value
+                "if (1 < 2) { 10 }",
+                "if (1 > 2) { 10 }",
+                "if (1 > 2) { 10 } else { 20 }",
+                "if (1 < 2) { 10 } else { 20 }",
+        };
+        final Integer[] expected = {
+                10,
+                null,
+                10,
+                10,
+                null,
+                20,
+                10,
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            if (expected[i] != null) {
+                testIntegerObject(evaluated, expected[i]);
+            } else {
+                testNullObject(evaluated);
+            }
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);
@@ -147,5 +179,9 @@ public class EvaluatorTest {
     private void testBooleanObject(final MObject obj, boolean expected) {
         final MBoolean result = (MBoolean) obj;
         assertEquals(result.getValue(), expected);
+    }
+
+    private void testNullObject(final MObject obj) {
+        assertTrue(obj instanceof MNull);
     }
 }

@@ -4,6 +4,7 @@ import org.interpreter.ast.*;
 import org.interpreter.ast.Boolean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Evaluator {
 
@@ -35,6 +36,16 @@ public class Evaluator {
             final MObject left = eval(((InfixExpression) node).getLeft());
             final MObject right = eval(((InfixExpression) node).getRight());
             return evalInfixExpression(((InfixExpression) node).getOperator(), left, right);
+        }
+        else if (node instanceof BlockStatement) {
+            return evalStatements(
+                    new ArrayList<>(
+                            Arrays.asList(((BlockStatement) node).getStatements())
+                    )
+            );
+        }
+        else if (node instanceof IfExpression) {
+            return evalIfExpression((IfExpression) node);
         }
         return null;
     }
@@ -123,5 +134,22 @@ public class Evaluator {
             default:
                 return NULL;
         }
+    }
+
+    private static MObject evalIfExpression(final IfExpression ifExpr) {
+        final MObject condition = eval(ifExpr.getCondition());
+        final BlockStatement alternative = ifExpr.getAlternative();
+
+        if (isTruthy(condition)) {
+            return eval(ifExpr.getConsequence());
+        } else if (alternative != null) {
+            return eval(alternative);
+        } else {
+            return NULL;
+        }
+    }
+
+    private static boolean isTruthy(final MObject obj) {
+        return obj != NULL && obj != FALSE;
     }
 }
