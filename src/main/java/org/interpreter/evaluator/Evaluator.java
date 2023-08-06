@@ -12,6 +12,8 @@ public class Evaluator {
     private static final MNull NULL = new MNull();
     
     public static MObject eval(Node node) {
+        // could we use a better pattern than just adding here else if cases ??
+        // maybe a factory pattern with generics
         if (node instanceof Program) {
             return evalStatements(((Program) node).getStatements());
         }
@@ -28,6 +30,11 @@ public class Evaluator {
             // right might be MInteger or MBoolean
             final MObject right = eval(((PrefixExpression) node).getRight());
             return evalPrefixExpression(((PrefixExpression) node).getOperator(), right);
+        }
+        else if (node instanceof InfixExpression) {
+            final MObject left = eval(((InfixExpression) node).getLeft());
+            final MObject right = eval(((InfixExpression) node).getRight());
+            return evalInfixExpression(((InfixExpression) node).getOperator(), left, right);
         }
         return null;
     }
@@ -75,5 +82,30 @@ public class Evaluator {
     private static MObject evalMinusPrefixOperatorExpression(final MObject right) {
         final int value = ((MInteger)right).getValue();
         return new MInteger(-value);
+    }
+
+    private static MObject evalInfixExpression(final String operator, final MObject left, final MObject right) {
+        if (left.type() == MObjectType.INTEGER && right.type() == MObjectType.INTEGER) {
+            return evalIntegerInfixExpression(operator, (MInteger) left, (MInteger) right);
+        }
+        return NULL;
+    }
+
+    private static MObject evalIntegerInfixExpression(final String operator, final MInteger left, final MInteger right) {
+        final int leftVal = left.getValue();
+        final int rightVal = right.getValue();
+
+        switch (operator) {
+            case "+":
+                return new MInteger(leftVal + rightVal);
+            case "-":
+                return new MInteger(leftVal - rightVal);
+            case "*":
+                return new MInteger(leftVal * rightVal);
+            case "/":
+                return new MInteger(leftVal / rightVal);
+            default:
+                return NULL;
+        }
     }
 }
