@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,8 +127,8 @@ public class ParserTest {
         assertEquals(program.getStatements().size(), 1);
         final Statement s = program.getStatements().get(0);
         final Boolean bool = (Boolean) ((ExpressionStatement) s).getExpression();
-        assertTrue(bool != null);
-        assertEquals(bool.getValue(), false);
+        assertNotNull(bool);
+        assertFalse(bool.getValue());
     }
 
     @Test
@@ -144,8 +143,8 @@ public class ParserTest {
         assertEquals(program.getStatements().size(), 1);
         final Statement s = program.getStatements().get(0);
         final Boolean bool = (Boolean) ((ExpressionStatement) s).getExpression();
-        assertTrue(bool != null);
-        assertEquals(bool.getValue(), true);
+        assertNotNull(bool);
+        assertTrue(bool.getValue());
     }
 
     @Test
@@ -161,7 +160,7 @@ public class ParserTest {
         final Statement s = program.getStatements().get(0);
         assertTrue(s instanceof ExpressionStatement);
         final IntegerLiteral literal = (IntegerLiteral) ((ExpressionStatement) s).getExpression();
-        assertTrue(literal instanceof IntegerLiteral);
+        assertTrue(literal != null);
         assertEquals(literal.getValue(), 5);
     }
 

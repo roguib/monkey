@@ -5,6 +5,9 @@ import org.interpreter.ast.Program;
 import org.interpreter.lexer.Lexer;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
@@ -165,13 +168,17 @@ public class EvaluatorTest {
 
     @Test
     public void testReturnValue() {
+        final String ifElseReturn = readProgram("src/test/resources/fixtures/if-else-return.monkey");
+
         final String[] input = {
                 "return 10;",
                 "return 10; 9;",
                 "return 2 * 5; 9;", // !5 acts as truthy value
                 "9; return 2 * 5; 9;",
+                ifElseReturn,
         };
         final Integer[] expected = {
+                10,
                 10,
                 10,
                 10,
@@ -204,5 +211,23 @@ public class EvaluatorTest {
 
     private void testNullObject(final MObject obj) {
         assertTrue(obj instanceof MNull);
+    }
+
+    private String readProgram(final String path) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+                if (line != null) {
+                    sb.append(System.getProperty("line.separator"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 }

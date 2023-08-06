@@ -4,7 +4,6 @@ import org.interpreter.ast.*;
 import org.interpreter.ast.Boolean;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Evaluator {
 
@@ -16,7 +15,7 @@ public class Evaluator {
         // could we use a better pattern than just adding here else if cases ??
         // maybe a factory pattern with generics
         if (node instanceof Program) {
-            return evalStatements(((Program) node).getStatements());
+            return evalProgram(((Program) node).getStatements());
         }
         else if (node instanceof ExpressionStatement) {
             return eval(((ExpressionStatement) node).getExpression());
@@ -38,11 +37,7 @@ public class Evaluator {
             return evalInfixExpression(((InfixExpression) node).getOperator(), left, right);
         }
         else if (node instanceof BlockStatement) {
-            return evalStatements(
-                    new ArrayList<>(
-                            Arrays.asList(((BlockStatement) node).getStatements())
-                    )
-            );
+            return evalBlockStatement((BlockStatement) node);
         }
         else if (node instanceof IfExpression) {
             return evalIfExpression((IfExpression) node);
@@ -54,7 +49,7 @@ public class Evaluator {
         return null;
     }
     
-    private static MObject evalStatements(final ArrayList<Statement> stmts) {
+    private static MObject evalProgram(final ArrayList<Statement> stmts) {
         MObject result = null;
 
         for (Statement stmt : stmts) {
@@ -65,6 +60,20 @@ public class Evaluator {
             }
         }
         
+        return result;
+    }
+
+    private static MObject evalBlockStatement(final BlockStatement block) {
+        MObject result = null;
+
+        for (Statement stmt : block.getStatements()) {
+            result = eval(stmt);
+
+            if (result != null && result.type() == MObjectType.RETURN_VALUE) {
+                return result;
+            }
+        }
+
         return result;
     }
 
