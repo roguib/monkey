@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluatorTest {
 
-    // For now we only support "-" arithmetic operator
+    // For now, we only support "-" arithmetic operator
     @Test
     public void testEvalIntegerExpression() {
         final String[] input = {
@@ -160,6 +160,27 @@ public class EvaluatorTest {
             } else {
                 testNullObject(evaluated);
             }
+        }
+    }
+
+    @Test
+    public void testReturnValue() {
+        final String[] input = {
+                "return 10;",
+                "return 10; 9;",
+                "return 2 * 5; 9;", // !5 acts as truthy value
+                "9; return 2 * 5; 9;",
+        };
+        final Integer[] expected = {
+                10,
+                10,
+                10,
+                10,
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            testIntegerObject(evaluated, expected[i]);
         }
     }
 

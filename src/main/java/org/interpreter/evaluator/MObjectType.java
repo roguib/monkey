@@ -4,4 +4,5 @@ public enum MObjectType {
     INTEGER,
     BOOLEAN,
     NULL,
+    RETURN_VALUE,
 }

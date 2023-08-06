@@ -47,6 +47,10 @@ public class Evaluator {
         else if (node instanceof IfExpression) {
             return evalIfExpression((IfExpression) node);
         }
+        else if (node instanceof ReturnStatement) {
+            final MObject val = eval(((ReturnStatement) node).getReturnValue());
+            return new ReturnValue(val);
+        }
         return null;
     }
     
@@ -55,6 +59,10 @@ public class Evaluator {
 
         for (Statement stmt : stmts) {
             result = eval(stmt);
+
+            if (result instanceof ReturnValue) {
+                return ((ReturnValue) result).getValue();
+            }
         }
         
         return result;
