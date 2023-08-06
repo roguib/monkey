@@ -104,6 +104,14 @@ public class Evaluator {
                 return new MInteger(leftVal * rightVal);
             case "/":
                 return new MInteger(leftVal / rightVal);
+            case "<":
+                return nativeBoolToBooleanObject(leftVal < rightVal);
+            case ">":
+                return nativeBoolToBooleanObject(leftVal > rightVal);
+            case "==":
+                return nativeBoolToBooleanObject(leftVal == rightVal);
+            case "!=":
+                return nativeBoolToBooleanObject(leftVal != rightVal);
             default:
                 return NULL;
         }
