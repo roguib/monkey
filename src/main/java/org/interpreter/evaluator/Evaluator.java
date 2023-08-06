@@ -88,7 +88,15 @@ public class Evaluator {
         if (left.type() == MObjectType.INTEGER && right.type() == MObjectType.INTEGER) {
             return evalIntegerInfixExpression(operator, (MInteger) left, (MInteger) right);
         }
-        return NULL;
+
+        switch (operator) {
+            case "==":
+                return nativeBoolToBooleanObject(left == right);
+            case "!=":
+                return nativeBoolToBooleanObject(left != right);
+            default:
+                return NULL;
+        }
     }
 
     private static MObject evalIntegerInfixExpression(final String operator, final MInteger left, final MInteger right) {
