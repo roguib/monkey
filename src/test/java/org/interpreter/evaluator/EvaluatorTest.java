@@ -191,6 +191,35 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testErrorHandling() {
+        final String ifElseBooleanAdditionError = readProgram("src/test/resources/fixtures/if-else-boolean-addition-error.monkey");
+
+        final String[] input = {
+                "5 + true;",
+                "5 + true; 5;",
+                "-true",
+                "true + false;",
+                "5; true + false; 5",
+                "if (10 > 1) { true + false; }",
+                ifElseBooleanAdditionError,
+        };
+        final String[] expected = {
+                "type mismatch: INTEGER + BOOLEAN",
+                "type mismatch: INTEGER + BOOLEAN",
+                "unknown operator: -BOOLEAN",
+                "unknown operator: BOOLEAN + BOOLEAN",
+                "unknown operator: BOOLEAN + BOOLEAN",
+                "unknown operator: BOOLEAN + BOOLEAN",
+                "unknown operator: BOOLEAN + BOOLEAN",
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MError evaluated = (MError) testEval(input[i]);
+            assertEquals(evaluated.getMessage(), expected[i]);
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);

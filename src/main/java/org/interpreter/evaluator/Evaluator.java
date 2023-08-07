@@ -58,6 +58,9 @@ public class Evaluator {
             if (result instanceof ReturnValue) {
                 return ((ReturnValue) result).getValue();
             }
+            else if (result instanceof MError) {
+                return result;
+            }
         }
         
         return result;
@@ -69,7 +72,8 @@ public class Evaluator {
         for (Statement stmt : block.getStatements()) {
             result = eval(stmt);
 
-            if (result != null && result.type() == MObjectType.RETURN_VALUE) {
+            if (result != null &&
+                (result.type() == MObjectType.RETURN_VALUE || result.type() == MObjectType.ERROR)) {
                 return result;
             }
         }
@@ -91,7 +95,7 @@ public class Evaluator {
         else if ("-".equals(operator)) {
             return evalMinusPrefixOperatorExpression(right);
         }
-        return NULL;
+        return new MError("unkown operator: " + operator + " " + right.type());
     }
 
     private static MObject evalBangOperatorExpression(final MObject right) {
@@ -108,6 +112,9 @@ public class Evaluator {
     }
 
     private static MObject evalMinusPrefixOperatorExpression(final MObject right) {
+        if (right.type() != MObjectType.INTEGER) {
+            return new MError("unknown operator: -" + right.type());
+        }
         final int value = ((MInteger)right).getValue();
         return new MInteger(-value);
     }
@@ -123,7 +130,10 @@ public class Evaluator {
             case "!=":
                 return nativeBoolToBooleanObject(left != right);
             default:
-                return NULL;
+                if (left.type() != right.type()) {
+                    return new MError("type mismatch: " + left.type() + " " + operator + " " + right.type());
+                }
+                return new MError("unknown operator: " + left.type() + " " + operator + " " + right.type());
         }
     }
 
@@ -149,7 +159,7 @@ public class Evaluator {
             case "!=":
                 return nativeBoolToBooleanObject(leftVal != rightVal);
             default:
-                return NULL;
+                return new MError("unknown operator: " + left.type() + " " + operator + " " + right.type());
         }
     }
 
