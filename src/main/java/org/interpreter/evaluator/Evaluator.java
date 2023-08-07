@@ -29,11 +29,20 @@ public class Evaluator {
         else if (node instanceof PrefixExpression) {
             // right might be MInteger or MBoolean
             final MObject right = eval(((PrefixExpression) node).getRight());
+            if (isError(right)) {
+                return right;
+            }
             return evalPrefixExpression(((PrefixExpression) node).getOperator(), right);
         }
         else if (node instanceof InfixExpression) {
             final MObject left = eval(((InfixExpression) node).getLeft());
+            if (isError(left)) {
+                return left;
+            }
             final MObject right = eval(((InfixExpression) node).getRight());
+            if (isError(right)) {
+                return right;
+            }
             return evalInfixExpression(((InfixExpression) node).getOperator(), left, right);
         }
         else if (node instanceof BlockStatement) {
@@ -44,6 +53,9 @@ public class Evaluator {
         }
         else if (node instanceof ReturnStatement) {
             final MObject val = eval(((ReturnStatement) node).getReturnValue());
+            if (isError(val)) {
+                return val;
+            }
             return new ReturnValue(val);
         }
         return null;
@@ -165,6 +177,9 @@ public class Evaluator {
 
     private static MObject evalIfExpression(final IfExpression ifExpr) {
         final MObject condition = eval(ifExpr.getCondition());
+        if (isError(condition)) {
+            return condition;
+        }
         final BlockStatement alternative = ifExpr.getAlternative();
 
         if (isTruthy(condition)) {
@@ -178,5 +193,12 @@ public class Evaluator {
 
     private static boolean isTruthy(final MObject obj) {
         return obj != NULL && obj != FALSE;
+    }
+
+    private static boolean isError(final MObject obj) {
+        if (obj != null) {
+            return obj.type() == MObjectType.ERROR;
+        }
+        return false;
     }
 }
