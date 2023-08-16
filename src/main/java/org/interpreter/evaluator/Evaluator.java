@@ -4,6 +4,7 @@ import org.interpreter.ast.*;
 import org.interpreter.ast.Boolean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Evaluator {
 
@@ -67,6 +68,10 @@ public class Evaluator {
         }
         else if (node instanceof Identifier) {
             return evalIdentifier((Identifier) node, env);
+        }
+        else if (node instanceof FunctionLiteral) {
+            final Identifier[] params = ((FunctionLiteral) node).getParameters();
+            return new MFunction(new ArrayList<>(Arrays.asList(params)), ((FunctionLiteral) node).getBody(), env);
         }
         return null;
     }

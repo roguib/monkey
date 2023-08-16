@@ -1,5 +1,6 @@
 package org.interpreter.evaluator;
 
+import org.interpreter.ast.Identifier;
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
 import org.interpreter.lexer.Lexer;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -240,6 +242,18 @@ public class EvaluatorTest {
         for (int i = 0; i < input.length; ++i) {
             testIntegerObject(testEval(input[i]), expected[i]);
         }
+    }
+
+    @Test
+    public void testFunctionObject() {
+        final String input = "fn(x) { x + 2; };";
+
+        final MObject evaluated = testEval(input);
+        final MFunction fn = (MFunction) evaluated;
+        final ArrayList<Identifier> parameters = fn.getParameters();
+        assertEquals(parameters.size(), 1);
+        assertEquals(parameters.get(0).toString(), "x");
+        assertEquals(fn.getBody().toString(), "(x + 2)");
     }
 
     private MObject testEval(final String input) {

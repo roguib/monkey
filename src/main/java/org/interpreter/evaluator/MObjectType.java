@@ -5,5 +5,6 @@ public enum MObjectType {
     BOOLEAN,
     NULL,
     RETURN_VALUE,
-    ERROR
+    ERROR,
+    FUNCTION
 }
