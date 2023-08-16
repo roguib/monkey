@@ -203,6 +203,7 @@ public class EvaluatorTest {
                 "5; true + false; 5",
                 "if (10 > 1) { true + false; }",
                 ifElseBooleanAdditionError,
+                "foobar",
         };
         final String[] expected = {
                 "type mismatch: INTEGER + BOOLEAN",
@@ -212,6 +213,7 @@ public class EvaluatorTest {
                 "unknown operator: BOOLEAN + BOOLEAN",
                 "unknown operator: BOOLEAN + BOOLEAN",
                 "unknown operator: BOOLEAN + BOOLEAN",
+                "identifier not found: foobar",
         };
         assertEquals(input.length, expected.length);
         for (int i = 0; i < input.length; ++i) {
@@ -220,12 +222,33 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testLetStatements() {
+        final String[] input = {
+                "let a = 5; a;",
+                "let a = 5 * 5; a;",
+                "let a = 5; let b = a; b;",
+                "let a = 5; let b = a; let c = a + b + 5; c;"
+        };
+        final int[] expected = {
+                5,
+                25,
+                5,
+                15,
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            testIntegerObject(testEval(input[i]), expected[i]);
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);
         final Program program = parser.parseProgram();
+        final Environment env = new Environment();
 
-        return Evaluator.eval(program);
+        return Evaluator.eval(program, env);
     }
 
     private void testIntegerObject(final MObject obj, int expected) {

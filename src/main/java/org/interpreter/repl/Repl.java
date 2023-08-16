@@ -2,11 +2,10 @@ package org.interpreter.repl;
 
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
+import org.interpreter.evaluator.Environment;
 import org.interpreter.evaluator.Evaluator;
 import org.interpreter.evaluator.MObject;
 import org.interpreter.lexer.Lexer;
-import org.interpreter.lexer.Token;
-import org.interpreter.lexer.TokenType;
 
 import java.io.InputStreamReader;
 import java.util.Scanner;
@@ -24,6 +23,7 @@ final public class Repl {
 
     public static void start() {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
+        final Environment env = new Environment();
         System.out.print(PROMPT);
         while(true) {
             final String line = scanner.nextLine();
@@ -38,7 +38,7 @@ final public class Repl {
                 continue;
             }
 
-            MObject evaluated = Evaluator.eval(program);
+            MObject evaluated = Evaluator.eval(program, env);
             if (evaluated != null) {
                 System.out.println(evaluated.inspect());
             }

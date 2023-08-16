@@ -11,14 +11,14 @@ public class Evaluator {
     private static final MBoolean FALSE = new MBoolean(false);
     private static final MNull NULL = new MNull();
     
-    public static MObject eval(Node node) {
+    public static MObject eval(Node node, Environment env) {
         // could we use a better pattern than just adding here else if cases ??
         // maybe a factory pattern with generics
         if (node instanceof Program) {
-            return evalProgram(((Program) node).getStatements());
+            return evalProgram(((Program) node).getStatements(), env);
         }
         else if (node instanceof ExpressionStatement) {
-            return eval(((ExpressionStatement) node).getExpression());
+            return eval(((ExpressionStatement) node).getExpression(), env);
         }
         else if (node instanceof IntegerLiteral) {
             return new MInteger(((IntegerLiteral) node).getValue());
@@ -28,44 +28,54 @@ public class Evaluator {
         }
         else if (node instanceof PrefixExpression) {
             // right might be MInteger or MBoolean
-            final MObject right = eval(((PrefixExpression) node).getRight());
+            final MObject right = eval(((PrefixExpression) node).getRight(), env);
             if (isError(right)) {
                 return right;
             }
             return evalPrefixExpression(((PrefixExpression) node).getOperator(), right);
         }
         else if (node instanceof InfixExpression) {
-            final MObject left = eval(((InfixExpression) node).getLeft());
+            final MObject left = eval(((InfixExpression) node).getLeft(), env);
             if (isError(left)) {
                 return left;
             }
-            final MObject right = eval(((InfixExpression) node).getRight());
+            final MObject right = eval(((InfixExpression) node).getRight(), env);
             if (isError(right)) {
                 return right;
             }
             return evalInfixExpression(((InfixExpression) node).getOperator(), left, right);
         }
         else if (node instanceof BlockStatement) {
-            return evalBlockStatement((BlockStatement) node);
+            return evalBlockStatement((BlockStatement) node, env);
         }
         else if (node instanceof IfExpression) {
-            return evalIfExpression((IfExpression) node);
+            return evalIfExpression((IfExpression) node, env);
         }
         else if (node instanceof ReturnStatement) {
-            final MObject val = eval(((ReturnStatement) node).getReturnValue());
+            final MObject val = eval(((ReturnStatement) node).getReturnValue(), env);
             if (isError(val)) {
                 return val;
             }
             return new ReturnValue(val);
         }
+        else if (node instanceof LetStatement) {
+            final MObject val = eval(((LetStatement) node).getValue(), env);
+            if (val instanceof MError) {
+                return val;
+            }
+            env.set(((LetStatement) node).getName().getValue(), val);
+        }
+        else if (node instanceof Identifier) {
+            return evalIdentifier((Identifier) node, env);
+        }
         return null;
     }
     
-    private static MObject evalProgram(final ArrayList<Statement> stmts) {
+    private static MObject evalProgram(final ArrayList<Statement> stmts, Environment env) {
         MObject result = null;
 
         for (Statement stmt : stmts) {
-            result = eval(stmt);
+            result = eval(stmt, env);
 
             if (result instanceof ReturnValue) {
                 return ((ReturnValue) result).getValue();
@@ -78,11 +88,11 @@ public class Evaluator {
         return result;
     }
 
-    private static MObject evalBlockStatement(final BlockStatement block) {
+    private static MObject evalBlockStatement(final BlockStatement block, Environment env) {
         MObject result = null;
 
         for (Statement stmt : block.getStatements()) {
-            result = eval(stmt);
+            result = eval(stmt, env);
 
             if (result != null &&
                 (result.type() == MObjectType.RETURN_VALUE || result.type() == MObjectType.ERROR)) {
@@ -175,20 +185,28 @@ public class Evaluator {
         }
     }
 
-    private static MObject evalIfExpression(final IfExpression ifExpr) {
-        final MObject condition = eval(ifExpr.getCondition());
+    private static MObject evalIfExpression(final IfExpression ifExpr, Environment env) {
+        final MObject condition = eval(ifExpr.getCondition(), env);
         if (isError(condition)) {
             return condition;
         }
         final BlockStatement alternative = ifExpr.getAlternative();
 
         if (isTruthy(condition)) {
-            return eval(ifExpr.getConsequence());
+            return eval(ifExpr.getConsequence(), env);
         } else if (alternative != null) {
-            return eval(alternative);
+            return eval(alternative, env);
         } else {
             return NULL;
         }
+    }
+
+    private static MObject evalIdentifier(final Identifier node, final Environment env) {
+        final MObject val = env.get(node.getValue());
+        if (val instanceof MNull) {
+            return new MError("identifier not found: " + node.getValue());
+        }
+        return val;
     }
 
     private static boolean isTruthy(final MObject obj) {
