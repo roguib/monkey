@@ -289,10 +289,19 @@ public class EvaluatorTest {
     }
 
     @Test
-    public void testGCcollectedByJava() {
+    public void testGCollectedByJava() {
         // When condition if (x > 550) is 550 or higher, Java throws StackOverflowError
         final String input = readProgram("src/test/resources/fixtures/gc-performed-by-java.monkey");
         testEval(input);
+    }
+
+    @Test
+    public void testStringLiteral() {
+        final String input = "\"Hello World!\"";
+
+        final MObject evaluated = testEval(input);
+        MString str = (MString) evaluated;
+        assertEquals(str.getValue(), "Hello World!");
     }
 
     private MObject testEval(final String input) {

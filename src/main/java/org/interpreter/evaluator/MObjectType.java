@@ -6,5 +6,6 @@ public enum MObjectType {
     NULL,
     RETURN_VALUE,
     ERROR,
-    FUNCTION
+    FUNCTION,
+    STRING,
 }

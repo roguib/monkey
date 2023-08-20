@@ -85,6 +85,9 @@ public class Evaluator {
             }
             return applyFunction(function, args);
         }
+        else if (node instanceof StringLiteral) {
+            return new MString(((StringLiteral) node).getValue());
+        }
         return null;
     }
     
