@@ -5,6 +5,7 @@ import org.interpreter.ast.Boolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Evaluator {
 
@@ -72,6 +73,17 @@ public class Evaluator {
         else if (node instanceof FunctionLiteral) {
             final Identifier[] params = ((FunctionLiteral) node).getParameters();
             return new MFunction(new ArrayList<>(Arrays.asList(params)), ((FunctionLiteral) node).getBody(), env);
+        }
+        else if (node instanceof CallExpression) {
+            MObject function = eval(((CallExpression) node).getFunction(), env);
+            if (isError(function)) {
+                return function;
+            }
+            MObject[] args = evalExpressions(((CallExpression) node).getArguments(), env);
+            if (args.length == 1 && isError(args[0])) {
+                return args[0];
+            }
+            return applyFunction(function, args);
         }
         return null;
     }
@@ -212,6 +224,41 @@ public class Evaluator {
             return new MError("identifier not found: " + node.getValue());
         }
         return val;
+    }
+
+    private static MObject[] evalExpressions(final Expression[] exps, final Environment env) {
+        ArrayList<MObject> result = new ArrayList<>();
+        for (final Expression exp: exps) {
+            MObject evaluated = eval(exp, env);
+            if (isError(evaluated)) {
+                return new MObject[]{evaluated};
+            }
+            result.add(evaluated);
+        }
+        return result.toArray(new MObject[result.size()]);
+    }
+
+    private static MObject applyFunction(MObject fn, MObject[] args) {
+        MFunction function = (MFunction) fn;
+        final Environment extendedEnv = extendFunctionEnv(function, args);
+        MObject evaluated = eval(function.getBody(), extendedEnv);
+        return unwrapReturnValue(evaluated);
+    }
+
+    private static Environment extendFunctionEnv(MFunction fn, MObject[] args) {
+        final Environment env = Environment.newEnclosedEnvironment(fn.getEnv());
+        final List<Identifier> params = fn.getParameters();
+        for (int i = 0; i < params.size(); ++i) {
+            env.set(params.get(i).getValue(), args[i]);
+        }
+        return env;
+    }
+
+    private static MObject unwrapReturnValue(MObject obj) {
+        if (obj instanceof ReturnValue) {
+            return ((ReturnValue) obj).getValue();
+        }
+        return obj;
     }
 
     private static boolean isTruthy(final MObject obj) {

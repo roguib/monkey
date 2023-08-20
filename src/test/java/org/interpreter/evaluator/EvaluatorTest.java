@@ -256,6 +256,36 @@ public class EvaluatorTest {
         assertEquals(fn.getBody().toString(), "(x + 2)");
     }
 
+    @Test
+    public void testFunctionApplication() {
+        final String[] input = {
+                "let identity = fn(x) { x; }; identity(5);",
+                "let identity = fn(x) { return x; }; identity(5);",
+                "let double = fn(x) { x * 2; }; double(5);",
+                "let add = fn(x, y) { x + y; }; add(5, 5);",
+                "let add = fn(x, y) { x + y; }; add(5+ 5, add(5, 5));",
+                "fn(x) { x; }(5)",
+        };
+        final int[] expected = {
+                5,
+                5,
+                10,
+                10,
+                20,
+                5,
+        };
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            testIntegerObject(testEval(input[i]), expected[i]);
+        }
+    }
+
+    @Test
+    public void testClosures() {
+        final String input = readProgram("src/test/resources/fixtures/closures.monkey");
+        testIntegerObject(testEval(input), 4);
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);

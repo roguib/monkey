@@ -45,4 +45,8 @@ public class MFunction implements MObject {
     public BlockStatement getBody() {
         return body;
     }
+
+    public Environment getEnv() {
+        return env;
+    }
 }
