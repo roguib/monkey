@@ -1,9 +1,11 @@
 package org.interpreter.evaluator;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.interpreter.ast.Identifier;
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
 import org.interpreter.lexer.Lexer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -284,6 +286,13 @@ public class EvaluatorTest {
     public void testClosures() {
         final String input = readProgram("src/test/resources/fixtures/closures.monkey");
         testIntegerObject(testEval(input), 4);
+    }
+
+    @Test
+    public void testGCcollectedByJava() {
+        // When condition if (x > 550) is 550 or higher, Java throws StackOverflowError
+        final String input = readProgram("src/test/resources/fixtures/gc-performed-by-java.monkey");
+        testEval(input);
     }
 
     private MObject testEval(final String input) {
