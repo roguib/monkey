@@ -144,6 +144,9 @@ public class Parser {
             return fnLit;
         };
         prefixParseFns.put(TokenType.FUNCTION, function);
+
+        final PrefixParse stringParse = (Token token) -> new StringLiteral(curToken, curToken.getLiteral());
+        prefixParseFns.put(TokenType.STRING, stringParse);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();

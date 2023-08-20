@@ -485,6 +485,20 @@ public class ParserTest {
         testInfixExpression(fnArg[2], 4, "+", 5);
     }
 
+    @Test
+    public void testStringLiteralExpression() {
+        String input = "\"Hello world\";";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        StringLiteral literal = (StringLiteral) stmt.getExpression();
+        assertEquals(literal.getValue(), "Hello world");
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
