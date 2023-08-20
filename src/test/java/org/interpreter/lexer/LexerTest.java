@@ -133,6 +133,10 @@ public class LexerTest {
                 new Token(TokenType.INT, "9"),
                 new Token(TokenType.SEMICOLON, ";"),
 
+                // strings
+                new Token(TokenType.STRING, "foobar"),
+                new Token(TokenType.STRING, "foo bar"),
+
                 new Token(TokenType.EOF, ""),
         };
         for (final Token result : results) {

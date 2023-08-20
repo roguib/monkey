@@ -42,6 +42,15 @@ public class Lexer {
         readPosition += 1;
     }
 
+    private String readString() {
+        int position = this.position + 1;
+        readChar();
+        while (ch != '\"' && ch != 0) {
+            readChar();
+        }
+        return input.substring(position, this.position);
+    }
+
     /**
      * Returns the next character pointed by readPosition without incrementing
      * position nor readPosition indexes
@@ -178,6 +187,9 @@ public class Lexer {
                 } else {
                     token = new Token(TokenType.BANG, ch);
                 }
+                break;
+            case '"':
+                token = new Token(TokenType.STRING, readString());
                 break;
             default:
                 if (isLetter(ch)) {

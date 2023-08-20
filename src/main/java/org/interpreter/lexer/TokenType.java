@@ -37,4 +37,5 @@ public enum TokenType {
     IF,
     ELSE,
     RETURN,
+    STRING,
 }
