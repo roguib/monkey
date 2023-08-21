@@ -175,6 +175,9 @@ public class Evaluator {
                 if (left.type() != right.type()) {
                     return new MError("type mismatch: " + left.type() + " " + operator + " " + right.type());
                 }
+                if (left.type() == MObjectType.STRING && right.type() == MObjectType.STRING) {
+                    return evalStringInfixExpression(operator, left, right);
+                }
                 return new MError("unknown operator: " + left.type() + " " + operator + " " + right.type());
         }
     }
@@ -262,6 +265,15 @@ public class Evaluator {
             return ((ReturnValue) obj).getValue();
         }
         return obj;
+    }
+
+    private static MObject evalStringInfixExpression(final String operator, MObject left, MObject right) {
+        if (!operator.equals("+")) {
+            return new MError("unknown operator: " + left.type() + " " + operator + " " + right.type());
+        }
+        final String leftVal = ((MString) left).getValue();
+        final String rightVal = ((MString) right).getValue();
+        return new MString(leftVal + rightVal);
     }
 
     private static boolean isTruthy(final MObject obj) {

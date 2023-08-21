@@ -208,6 +208,7 @@ public class EvaluatorTest {
                 "if (10 > 1) { true + false; }",
                 ifElseBooleanAdditionError,
                 "foobar",
+                "\"Hello\" - \"World\"",
         };
         final String[] expected = {
                 "type mismatch: INTEGER + BOOLEAN",
@@ -218,6 +219,7 @@ public class EvaluatorTest {
                 "unknown operator: BOOLEAN + BOOLEAN",
                 "unknown operator: BOOLEAN + BOOLEAN",
                 "identifier not found: foobar",
+                "unknown operator: STRING - STRING",
         };
         assertEquals(input.length, expected.length);
         for (int i = 0; i < input.length; ++i) {
@@ -299,6 +301,15 @@ public class EvaluatorTest {
     @Test
     public void testStringLiteral() {
         final String input = "\"Hello World!\"";
+
+        final MObject evaluated = testEval(input);
+        MString str = (MString) evaluated;
+        assertEquals(str.getValue(), "Hello World!");
+    }
+
+    @Test
+    public void testStringConcatenation() {
+        final String input ="\"Hello\" + \" \" + \"World!\"";
 
         final MObject evaluated = testEval(input);
         MString str = (MString) evaluated;
