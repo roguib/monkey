@@ -316,6 +316,38 @@ public class EvaluatorTest {
         assertEquals(str.getValue(), "Hello World!");
     }
 
+    @Test
+    public void testBuiltinFunctions() {
+        final String[] input = {
+                "len(\"\")",
+                "len(\"four\")",
+                "len(\"hello world\")",
+                "len(1)",
+                "len(\"one\", \"two\")",
+        };
+        final MObject[] expected = {
+                new MInteger(0),
+                new MInteger(4),
+                new MInteger(11),
+                new MError("argument to `len` not supported, got INTEGER"),
+                new MError("wrong number of arguments. got=2, want=1"),
+        };
+
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            if (expected[i] instanceof MInteger) {
+                testIntegerObject(evaluated, ((MInteger) expected[i]).getValue());
+            }
+            else if (expected[i] instanceof MString) {
+                assertEquals(((MString) evaluated).getValue(), ((MString) expected[i]).getValue());
+            }
+            else if (expected[i] instanceof MError) {
+                assertEquals(((MError) evaluated).getMessage(), ((MError) expected[i]).getMessage());
+            }
+        }
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);

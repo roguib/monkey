@@ -8,4 +8,5 @@ public enum MObjectType {
     ERROR,
     FUNCTION,
     STRING,
+    BUILTIN,
 }

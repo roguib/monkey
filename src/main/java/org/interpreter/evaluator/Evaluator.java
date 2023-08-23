@@ -5,6 +5,7 @@ import org.interpreter.ast.Boolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Evaluator {
@@ -12,6 +13,20 @@ public class Evaluator {
     private static final MBoolean TRUE = new MBoolean(true);
     private static final MBoolean FALSE = new MBoolean(false);
     private static final MNull NULL = new MNull();
+
+    private static final HashMap<String, Builtin> builtins = new HashMap<>();
+    static {
+        BuiltinInterface lenFunc = (MObject ...args) -> {
+            if (args.length != 1) {
+                return new MError("wrong number of arguments. got=" + args.length + ", want=1");
+            }
+            if (args[0] instanceof MString) {
+                return new MInteger(((MString) args[0]).getValue().length());
+            }
+            return new MError("argument to `len` not supported, got " + args[0].type());
+        };
+        builtins.put("len", new Builtin(lenFunc));
+    }
     
     public static MObject eval(Node node, Environment env) {
         // could we use a better pattern than just adding here else if cases ??
@@ -68,7 +83,7 @@ public class Evaluator {
             env.set(((LetStatement) node).getName().getValue(), val);
         }
         else if (node instanceof Identifier) {
-            return evalIdentifier((Identifier) node, env);
+            return (MObject) evalIdentifier((Identifier) node, env);
         }
         else if (node instanceof FunctionLiteral) {
             final Identifier[] params = ((FunctionLiteral) node).getParameters();
@@ -226,10 +241,16 @@ public class Evaluator {
 
     private static MObject evalIdentifier(final Identifier node, final Environment env) {
         final MObject val = env.get(node.getValue());
-        if (val instanceof MNull) {
-            return new MError("identifier not found: " + node.getValue());
+        if (!(val instanceof MNull)) {
+            return val;
         }
-        return val;
+
+        final BuiltinInterface builtin = builtins.get(node.getValue());
+        if (builtin != null) {
+            return (MObject) builtin;
+        }
+
+        return new MError("identifier not found: " + node.getValue());
     }
 
     private static MObject[] evalExpressions(final Expression[] exps, final Environment env) {
@@ -245,10 +266,17 @@ public class Evaluator {
     }
 
     private static MObject applyFunction(MObject fn, MObject[] args) {
-        MFunction function = (MFunction) fn;
-        final Environment extendedEnv = extendFunctionEnv(function, args);
-        MObject evaluated = eval(function.getBody(), extendedEnv);
-        return unwrapReturnValue(evaluated);
+        if (fn instanceof MFunction) {
+            MFunction function = (MFunction) fn;
+            final Environment extendedEnvironment = extendFunctionEnv(function, args);
+            MObject evaluated = eval(function.getBody(), extendedEnvironment);
+            return unwrapReturnValue(evaluated);
+        }
+        else if (fn instanceof BuiltinInterface) {
+            BuiltinInterface builtin = (BuiltinInterface) fn;
+            return builtin.fn(args);
+        }
+        return new MError("not a function: " + fn.type());
     }
 
     private static Environment extendFunctionEnv(MFunction fn, MObject[] args) {
