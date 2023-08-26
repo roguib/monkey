@@ -103,6 +103,13 @@ public class Evaluator {
         else if (node instanceof StringLiteral) {
             return new MString(((StringLiteral) node).getValue());
         }
+        else if (node instanceof ArrayLiteral) {
+            MObject[] elements = evalExpressions(((ArrayLiteral) node).getElements(), env);
+            if (elements.length == 1 && isError(elements[0])) {
+                return elements[0];
+            }
+            return new MArray(elements);
+        }
         return null;
     }
     

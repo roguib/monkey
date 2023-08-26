@@ -9,4 +9,5 @@ public enum MObjectType {
     FUNCTION,
     STRING,
     BUILTIN,
+    ARRAY,
 }

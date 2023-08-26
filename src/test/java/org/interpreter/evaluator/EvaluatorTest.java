@@ -348,6 +348,19 @@ public class EvaluatorTest {
         }
     }
 
+    @Test
+    public void testArrayLiterals() {
+        final String input = "[1, 2 * 2, 3 + 3]";
+
+        final MObject evaluated = testEval(input);
+        MArray result = (MArray) evaluated;
+        final MObject[] elems = result.getElements();
+        assertEquals(elems.length, 3);
+        testIntegerObject(elems[0], 1);
+        testIntegerObject(elems[1], 4);
+        testIntegerObject(elems[2], 6);
+    }
+
     private MObject testEval(final String input) {
         final Lexer l = new Lexer(input);
         final Parser parser = new Parser(l);
