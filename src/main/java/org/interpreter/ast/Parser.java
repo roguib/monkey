@@ -52,7 +52,7 @@ public class Parser {
 
     /**
      * maintains a map of <TokenType, PrefixParse> so given a TokenType
-     * we can retrieve it's parsing function
+     * we can retrieve its parsing function
      */
     private HashMap<TokenType, PrefixParse> prefixParseFns = new HashMap<>();
     {
@@ -147,6 +147,12 @@ public class Parser {
 
         final PrefixParse stringParse = (Token token) -> new StringLiteral(curToken, curToken.getLiteral());
         prefixParseFns.put(TokenType.STRING, stringParse);
+
+        final PrefixParse arrayParse = (Token token) -> {
+            final Expression[] arrayElems = parseExpressionList(TokenType.RBRACKET);
+            return new ArrayLiteral(curToken, arrayElems);
+        };
+        prefixParseFns.put(TokenType.LBRACKET, arrayParse);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
@@ -162,7 +168,7 @@ public class Parser {
 
         final InfixParse fnCall = (Expression function) -> {
             CallExpression exp = new CallExpression(curToken, function);
-            exp.setArguments(parseCallArguments());
+            exp.setArguments(parseExpressionList(TokenType.RPAREN));
             return exp;
         };
 
@@ -342,28 +348,28 @@ public class Parser {
         return identifiers.toArray(new Identifier[identifiers.size()]);
     }
 
-    protected Expression[] parseCallArguments() {
-        ArrayList<Expression> args = new ArrayList<>();
+    protected Expression[] parseExpressionList(final TokenType end) {
+        ArrayList<Expression> list = new ArrayList<>();
 
-        if (peekTokenIs(TokenType.RPAREN)) {
+        if (peekTokenIs(end)) {
             nextToken();
-            return args.toArray(new Expression[0]);
+            return list.toArray(new Expression[list.size()]);
         }
 
         nextToken();
-        args.add(parseExpression(operationPrecedence.LOWEST.getValue()));
+        list.add(parseExpression(operationPrecedence.LOWEST.getValue()));
 
-        while(peekTokenIs(TokenType.COMMA)) {
+        while (peekTokenIs(TokenType.COMMA)) {
             nextToken();
-            nextToken();
-            args.add(parseExpression(operationPrecedence.LOWEST.getValue()));
+            nextToken(); // TODO: this won't work for arrays that don't put a space between the comma and the next elem
+            list.add(parseExpression(operationPrecedence.LOWEST.getValue()));
         }
 
-        if (!expectPeek(TokenType.RPAREN)) {
-            return null;
+        if (!expectPeek(end)) {
+            return null; // TODO: handle more gracefully
         }
 
-        return args.toArray(new Expression[args.size()]);
+        return list.toArray(new Expression[list.size()]);
     }
 
     private boolean curTokenIs(TokenType t) {

@@ -499,6 +499,26 @@ public class ParserTest {
         assertEquals(literal.getValue(), "Hello world");
     }
 
+    @Test
+    public void testParsingArrayLiterals() {
+        final String input = "[1, 2 * 2, 3 + 3]";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+
+        ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        ArrayLiteral array = (ArrayLiteral) stmt.getExpression();
+        final Expression[] elems = array.getElements();
+        assertEquals(elems.length, 3);
+        testIntegerLiteral(elems[0], 1);
+        testInfixExpression(elems[1], 2,"*", 2);
+        testInfixExpression(elems[2], 3, "+", 3);
+
+    }
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());
