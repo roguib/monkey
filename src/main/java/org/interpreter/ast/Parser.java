@@ -26,7 +26,8 @@ public class Parser {
         SUM(4),
         PRODUCT(5),
         PREFIX(6),
-        CALL(7);
+        CALL(7),
+        INDEX(8); // array[index]
 
         private final int value;
         private operationPrecedence(int value) {
@@ -48,6 +49,7 @@ public class Parser {
         precedences.put(TokenType.SLASH, operationPrecedence.PRODUCT.getValue());
         precedences.put(TokenType.ASTERISK, operationPrecedence.PRODUCT.getValue());
         precedences.put(TokenType.LPAREN, operationPrecedence.CALL.getValue());
+        precedences.put(TokenType.LBRACKET, operationPrecedence.INDEX.getValue());
     }
 
     /**
@@ -172,6 +174,21 @@ public class Parser {
             return exp;
         };
 
+        // for myArray[0] we treat "[" as infix operator, myArray as the left operand and 0 as the right operand
+        final InfixParse indexExpr = (Expression left) -> {
+            IndexExpression exp = new IndexExpression(curToken, left);
+
+            nextToken();
+
+            exp.setIndex(parseExpression(operationPrecedence.LOWEST.getValue()));
+
+            if (!expectPeek(TokenType.RBRACKET)) {
+                return null; // TODO: handle error more gracefully
+            }
+
+            return exp;
+        };
+
         infixParseFns.put(TokenType.PLUS, p);
         infixParseFns.put(TokenType.MINUS, p);
         infixParseFns.put(TokenType.SLASH, p);
@@ -181,6 +198,7 @@ public class Parser {
         infixParseFns.put(TokenType.LT, p);
         infixParseFns.put(TokenType.GT, p);
         infixParseFns.put(TokenType.LPAREN, fnCall);
+        infixParseFns.put(TokenType.LBRACKET, indexExpr);
     }
 
     public Parser(final Lexer l) {

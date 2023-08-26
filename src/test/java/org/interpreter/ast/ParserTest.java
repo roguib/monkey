@@ -334,6 +334,8 @@ public class ParserTest {
                 "a + add(b * c) + d",
                 "add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))",
                 "add(a + b + c * d / f + g)",
+                "a * [1, 2, 3, 4][b * c] * d",
+                "add(a * b[2], b[1], 2 * [1, 2][1])",
         };
         final String[] expected = {
                 "((-a) * b)",
@@ -360,6 +362,8 @@ public class ParserTest {
                 "((a + add((b * c))) + d)",
                 "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))",
                 "add((((a + b) + ((c * d) / f)) + g))",
+                "((a * ([1, 2, 3, 4][(b * c)])) * d)",
+                "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))",
         };
         for (int i = 0; i < input.length; ++i) {
             final Lexer l = new Lexer(input[i]);
@@ -517,6 +521,21 @@ public class ParserTest {
         testInfixExpression(elems[1], 2,"*", 2);
         testInfixExpression(elems[2], 3, "+", 3);
 
+    }
+
+    @Test
+    public void testParsingIndexExpression() {
+        final String input = "myArray[1 + 1]";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final IndexExpression indexExpression = (IndexExpression) stmt.getExpression();
+        testIdentifier(indexExpression.getLeft(), "myArray");
+        testInfixExpression(indexExpression.getIndex(), 1, "+", 1);
     }
 
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
