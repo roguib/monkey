@@ -209,6 +209,7 @@ public class EvaluatorTest {
                 ifElseBooleanAdditionError,
                 "foobar",
                 "\"Hello\" - \"World\"",
+                "[1, 2, 3][\"4\"]",
         };
         final String[] expected = {
                 "type mismatch: INTEGER + BOOLEAN",
@@ -220,6 +221,7 @@ public class EvaluatorTest {
                 "unknown operator: BOOLEAN + BOOLEAN",
                 "identifier not found: foobar",
                 "unknown operator: STRING - STRING",
+                "index operator not supported: STRING",
         };
         assertEquals(input.length, expected.length);
         for (int i = 0; i < input.length; ++i) {
@@ -359,6 +361,45 @@ public class EvaluatorTest {
         testIntegerObject(elems[0], 1);
         testIntegerObject(elems[1], 4);
         testIntegerObject(elems[2], 6);
+    }
+
+    @Test
+    public void testArrayIndexExpressions() {
+        final String[] input = {
+                "[1, 2, 3][0]",
+                "[1, 2, 3][1]",
+                "[1, 2, 3][2]",
+                "let i = 0; [1][i];",
+                "[1, 2, 3][1 + 1]",
+                "let myArray = [1, 2, 3]; myArray[2];",
+                "let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];",
+                "let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]",
+                "[1, 2, 3][3]",
+                "[1, 2, 3][-1]",
+        };
+        final Integer[] expected = {
+                1,
+                2,
+                3,
+                1,
+                3,
+                3,
+                6,
+                2,
+                null,
+                null,
+        };
+
+        assertEquals(input.length, expected.length);
+        for (int i = 0; i < input.length; ++i) {
+            final MObject evaluated = testEval(input[i]);
+            if (evaluated instanceof MInteger) {
+                testIntegerObject(evaluated, expected[i]);
+            }
+            else {
+                testNullObject(evaluated);
+            }
+        }
     }
 
     private MObject testEval(final String input) {

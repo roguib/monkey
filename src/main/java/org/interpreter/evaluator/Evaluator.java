@@ -110,6 +110,17 @@ public class Evaluator {
             }
             return new MArray(elements);
         }
+        else if (node instanceof IndexExpression) {
+            final MObject left = eval(((IndexExpression) node).getLeft(), env);
+            if (isError(left)) {
+                return left;
+            }
+            final MObject index = eval(((IndexExpression) node).getIndex(), env);
+            if (isError(index)) {
+                return index;
+            }
+            return evalIndexExpression(left, index);
+        }
         return null;
     }
     
@@ -309,6 +320,24 @@ public class Evaluator {
         final String leftVal = ((MString) left).getValue();
         final String rightVal = ((MString) right).getValue();
         return new MString(leftVal + rightVal);
+    }
+
+    private static MObject evalIndexExpression(MObject left, MObject index) {
+        if (left.type() == MObjectType.ARRAY && index.type() == MObjectType.INTEGER) {
+            return evalArrayIndexExpression((MArray) left, (MInteger) index);
+        } else {
+            return new MError("index operator not supported: " + index.type());
+        }
+    }
+
+    private static MObject evalArrayIndexExpression(MArray array, MInteger index) {
+        final Integer idx = index.getValue();
+        final int max = array.getElements().length - 1;
+        if (idx < 0 || idx > max) {
+            // TODO: Handle error properly
+            return NULL;
+        }
+        return array.getElements()[idx];
     }
 
     private static boolean isTruthy(final MObject obj) {
