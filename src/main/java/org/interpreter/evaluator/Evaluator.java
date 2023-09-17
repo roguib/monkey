@@ -22,10 +22,60 @@ public class Evaluator {
             }
             if (args[0] instanceof MString) {
                 return new MInteger(((MString) args[0]).getValue().length());
+            } else if (args[0] instanceof MArray) {
+                return new MInteger(((MArray) args[0]).getElements().length);
             }
             return new MError("argument to `len` not supported, got " + args[0].type());
         };
         builtins.put("len", new Builtin(lenFunc));
+
+        BuiltinInterface firstFunction = (MObject ...args) -> {
+            if (args.length != 1) {
+                return new MError("wrong number of arguments. got=" + args.length + ", want=1");
+            }
+            if (args[0].type() != MObjectType.ARRAY) {
+                return new MError("argument to `first must be ARRAY, got= " + args[0].type());
+            }
+            MArray arr = (MArray) args[0];
+            if (arr.getElements().length > 0) {
+                return arr.getElements()[0];
+            }
+            return NULL;
+        };
+        builtins.put("first", new Builtin(firstFunction));
+
+        BuiltinInterface lastFunction = (MObject ...args) -> {
+            if (args.length != 1) {
+                return new MError("wrong number of arguments. got=" + args.length + ", want=1");
+            }
+            if (args[0].type() != MObjectType.ARRAY) {
+                return new MError("argument to `first must be ARRAY, got= " + args[0].type());
+            }
+            MArray arr = (MArray) args[0];
+            // TODO: this could be improved by saving length as a local variable in the Array class
+            int length = arr.getElements().length;
+            if (length > 0) {
+                return arr.getElements()[length - 1];
+            }
+            return NULL;
+        };
+        builtins.put("last", new Builtin(lastFunction));
+
+        BuiltinInterface restFunction = (MObject ...args) -> {
+            if (args.length != 1) {
+                return new MError("wrong number of arguments. got=" + args.length + ", want=1");
+            }
+            if (args[0].type() != MObjectType.ARRAY) {
+                return new MError("argument to `first must be ARRAY, got= " + args[0].type());
+            }
+            MArray arr = (MArray) args[0];
+            int length = arr.getElements().length;
+            if (length > 0) {
+                return new MArray(Arrays.copyOfRange(arr.getElements(), 1, length));
+            }
+            return NULL;
+        };
+        builtins.put("rest", new Builtin(restFunction));
     }
     
     public static MObject eval(Node node, Environment env) {

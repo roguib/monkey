@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -326,6 +327,17 @@ public class EvaluatorTest {
                 "len(\"hello world\")",
                 "len(1)",
                 "len(\"one\", \"two\")",
+                "len([1])",
+                "len([1, 2, 3])",
+                "first([])",
+                "first([1])",
+                "first([1, 2, 3])",
+                "last([])",
+                "last([1])",
+                "last([1, 2, 3])",
+                "rest([])",
+                "rest([1])",
+                "rest([1, 2, 3])",
         };
         final MObject[] expected = {
                 new MInteger(0),
@@ -333,6 +345,17 @@ public class EvaluatorTest {
                 new MInteger(11),
                 new MError("argument to `len` not supported, got INTEGER"),
                 new MError("wrong number of arguments. got=2, want=1"),
+                new MInteger(1),
+                new MInteger(3),
+                new MNull(),
+                new MInteger(1),
+                new MInteger(1),
+                new MNull(),
+                new MInteger(1),
+                new MInteger(3),
+                new MNull(),
+                new MArray(new MObject[0]),
+                new MArray(new MObject[]{ new MInteger(2), new MInteger(3)}),
         };
 
         assertEquals(input.length, expected.length);
@@ -343,6 +366,9 @@ public class EvaluatorTest {
             }
             else if (expected[i] instanceof MString) {
                 assertEquals(((MString) evaluated).getValue(), ((MString) expected[i]).getValue());
+            }
+            else if (expected[i] instanceof MArray) {
+                testArrayObject(evaluated, expected[i]);
             }
             else if (expected[i] instanceof MError) {
                 assertEquals(((MError) evaluated).getMessage(), ((MError) expected[i]).getMessage());
@@ -423,6 +449,17 @@ public class EvaluatorTest {
 
     private void testNullObject(final MObject obj) {
         assertTrue(obj instanceof MNull);
+    }
+
+    private void testArrayObject(final MObject obj, final MObject expected) {
+        assertTrue(obj instanceof MArray);
+        assertTrue(expected instanceof MArray);
+        final MObject[] actArr = ((MArray) obj).getElements();
+        final MObject[] expectedArr = ((MArray) expected).getElements();
+        assertEquals(actArr.length, expectedArr.length);
+        for (int i = 0; i < actArr.length; ++i) {
+            assertTrue(actArr[i].inspect().equals(expectedArr[i].inspect()));
+        }
     }
 
     private String readProgram(final String path) {
