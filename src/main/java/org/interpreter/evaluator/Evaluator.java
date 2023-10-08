@@ -76,6 +76,23 @@ public class Evaluator {
             return NULL;
         };
         builtins.put("rest", new Builtin(restFunction));
+
+        BuiltinInterface pushFunction = (MObject ...args) -> {
+            if (args.length != 2) {
+                return new MError("wrong number of arguments, got=" + args.length + ", want=2");
+            }
+            if (args[0].type() != MObjectType.ARRAY) {
+                return new MError("argument to `push` must be ARRAY, got " + args[0].type());
+            }
+            final MObject[] oldElems = ((MArray) args[0]).getElements();
+            final MObject[] newElems = new MObject[oldElems.length + 1];
+            for (int i = 0; i < oldElems.length; ++i) {
+                newElems[i] = oldElems[i];
+            }
+            newElems[oldElems.length] = args[1];
+            return new MArray(newElems);
+        };
+        builtins.put("push", new Builtin(pushFunction));
     }
     
     public static MObject eval(Node node, Environment env) {

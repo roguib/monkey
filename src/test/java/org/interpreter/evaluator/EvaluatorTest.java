@@ -338,6 +338,7 @@ public class EvaluatorTest {
                 "rest([])",
                 "rest([1])",
                 "rest([1, 2, 3])",
+                "let a = [1, 2]; let b = push(a, 5); b;"
         };
         final MObject[] expected = {
                 new MInteger(0),
@@ -356,6 +357,7 @@ public class EvaluatorTest {
                 new MNull(),
                 new MArray(new MObject[0]),
                 new MArray(new MObject[]{ new MInteger(2), new MInteger(3)}),
+                new MArray(new MObject[]{ new MInteger(1), new MInteger(2), new MInteger(5)}),
         };
 
         assertEquals(input.length, expected.length);
