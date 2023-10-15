@@ -1,5 +1,7 @@
 package org.interpreter.evaluator;
 
+import org.interpreter.evaluator.object.HashKey;
+
 public class MInteger implements MObject {
 
     private int value;
@@ -20,5 +22,9 @@ public class MInteger implements MObject {
 
     public int getValue() {
         return value;
+    }
+
+    public HashKey getHashKey() {
+        return HashKey.getHashKey(this);
     }
 }

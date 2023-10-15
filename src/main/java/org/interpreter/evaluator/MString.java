@@ -1,5 +1,7 @@
 package org.interpreter.evaluator;
 
+import org.interpreter.evaluator.object.HashKey;
+
 public class MString  implements  MObject {
     private String value;
 
@@ -19,5 +21,9 @@ public class MString  implements  MObject {
 
     public String getValue() {
         return this.value;
+    }
+
+    public HashKey getHashKey() {
+        return HashKey.getHashKey(this);
     }
 }
