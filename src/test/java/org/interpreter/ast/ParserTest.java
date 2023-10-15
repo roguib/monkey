@@ -538,6 +538,39 @@ public class ParserTest {
         testInfixExpression(indexExpression.getIndex(), 1, "+", 1);
     }
 
+    @Test
+    public void testHashLiteralsStringKeys() {
+        final String input = "{\"one\": 1, \"two\": 2}";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final HashLiteral hash = (HashLiteral) stmt.getExpression();
+        assertEquals(hash.getPairs().size(), 2);
+
+        assertEquals(hash.toString(), "{\"one\": 1, \"two\": 2}");
+    }
+
+    @Test
+    public void testEmptyHashLiteral() {
+        final String input = "{}";
+
+        final Lexer l = new Lexer(input);
+        final Parser p = new Parser(l);
+        final Program program = p.parseProgram();
+        checkParserErrors(p);
+
+        final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
+        final HashLiteral hash = (HashLiteral) stmt.getExpression();
+        assertEquals(hash.getPairs().size(), 0);
+    }
+
+    // TODO: Test coverage for integer and booleans as hash keys
+    // TODO: TestParsingHashLiteralsWithExpressions p. 188
+
     private void testLetStatement(final Statement stmt, final String expectedIdentifier) {
         assertTrue(stmt instanceof LetStatement);
         assertEquals("let", stmt.tokenLiteral());

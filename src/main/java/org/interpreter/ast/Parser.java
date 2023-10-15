@@ -155,6 +155,36 @@ public class Parser {
             return new ArrayLiteral(curToken, arrayElems);
         };
         prefixParseFns.put(TokenType.LBRACKET, arrayParse);
+
+        final PrefixParse hashMapParse = (Token token) -> {
+            final HashLiteral hash = new HashLiteral(curToken);
+            final HashMap<Expression, Expression> pairs = new HashMap<>();
+
+            while(!peekTokenIs(TokenType.RBRACE)) {
+                nextToken();
+                final Expression key = parseExpression(operationPrecedence.LOWEST.getValue());
+
+                if (!expectPeek(TokenType.COLON)) {
+                    return null;
+                }
+
+                nextToken();
+                final Expression value = parseExpression(operationPrecedence.LOWEST.getValue());
+                pairs.put(key, value);
+
+                if (!peekTokenIs(TokenType.RBRACE) && !expectPeek(TokenType.COMMA)) {
+                    return null;
+                }
+            }
+
+            if (!expectPeek(TokenType.RBRACE)) {
+                return null;
+            }
+
+            hash.setPairs(pairs);
+            return hash;
+        };
+        prefixParseFns.put(TokenType.LBRACE, hashMapParse);
     }
 
     private HashMap<TokenType, InfixParse> infixParseFns = new HashMap<>();
