@@ -145,6 +145,13 @@ public class LexerTest {
                 new Token(TokenType.RBRACKET, "]"),
                 new Token(TokenType.SEMICOLON, ";"),
 
+                // {"foo": "bar"}
+                new Token(TokenType.LBRACE, "{"),
+                new Token(TokenType.STRING, "foo"),
+                new Token(TokenType.COLON, ":"),
+                new Token(TokenType.STRING, "bar"),
+                new Token(TokenType.RBRACE, "}"),
+
                 new Token(TokenType.EOF, ""),
         };
         for (final Token result : results) {

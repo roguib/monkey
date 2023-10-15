@@ -40,4 +40,5 @@ public enum TokenType {
     ELSE,
     RETURN,
     STRING,
+    COLON,
 }
