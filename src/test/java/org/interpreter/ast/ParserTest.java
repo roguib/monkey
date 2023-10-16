@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -549,9 +551,17 @@ public class ParserTest {
 
         final ExpressionStatement stmt = (ExpressionStatement) program.getStatements().get(0);
         final HashLiteral hash = (HashLiteral) stmt.getExpression();
-        assertEquals(hash.getPairs().size(), 2);
 
-        assertEquals(hash.toString(), "{\"one\": 1, \"two\": 2}");
+        final HashMap<String, Integer> expectedPairs = new HashMap<>();
+        expectedPairs.put("one", 1);
+        expectedPairs.put("two", 2);
+
+        assertEquals(hash.getPairs().size(), expectedPairs.size());
+        for (Map.Entry<Expression, Expression> entry : hash.getPairs().entrySet()) {
+            final String keyToTest = ((StringLiteral) entry.getKey()).getValue();
+            final Integer valueToTest = ((IntegerLiteral) entry.getValue()).getValue();
+            assertEquals(expectedPairs.get(keyToTest), valueToTest);
+        }
     }
 
     @Test

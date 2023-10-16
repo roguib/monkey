@@ -1,9 +1,6 @@
 package org.interpreter.object;
 
-import org.interpreter.ast.StringLiteral;
 import org.interpreter.evaluator.MString;
-import org.interpreter.lexer.Token;
-import org.interpreter.lexer.TokenType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
