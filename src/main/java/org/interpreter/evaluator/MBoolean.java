@@ -1,8 +1,9 @@
 package org.interpreter.evaluator;
 
 import org.interpreter.evaluator.object.HashKey;
+import org.interpreter.evaluator.object.Hashable;
 
-public class MBoolean implements MObject {
+public class MBoolean implements MObject, Hashable {
 
     private final boolean value;
 
@@ -24,6 +25,7 @@ public class MBoolean implements MObject {
         return value;
     }
 
+    @Override
     public HashKey getHashKey() {
         return HashKey.getHashKey(this);
     }

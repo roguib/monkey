@@ -10,4 +10,5 @@ public enum MObjectType {
     STRING,
     BUILTIN,
     ARRAY,
+    HASH,
 }

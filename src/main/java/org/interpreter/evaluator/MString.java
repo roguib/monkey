@@ -1,8 +1,9 @@
 package org.interpreter.evaluator;
 
 import org.interpreter.evaluator.object.HashKey;
+import org.interpreter.evaluator.object.Hashable;
 
-public class MString  implements  MObject {
+public class MString  implements MObject, Hashable {
     private String value;
 
     public MString(final String value) {
@@ -23,6 +24,7 @@ public class MString  implements  MObject {
         return this.value;
     }
 
+    @Override
     public HashKey getHashKey() {
         return HashKey.getHashKey(this);
     }
