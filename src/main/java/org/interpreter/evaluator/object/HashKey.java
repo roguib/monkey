@@ -31,4 +31,23 @@ public class HashKey {
     public int getValue() {
         return value;
     }
+
+    // This is needed because we're using a custom class HashKey as a key for the internal
+    // pairs HashMap. Otherwise, the pairs hash map wouldn't be able to distinguish between
+    // the same two Hash Keys objects, always returning false when calling pairs.hasKey(<HashKey>)
+    // see: https://www.baeldung.com/java-custom-class-map-key
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        final HashKey that = (HashKey) o;
+        return this.type == that.type && this.value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value;
+    }
 }

@@ -11,22 +11,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-class HashPair {
-    public MObject key;
-    public MObject value;
-
-    HashPair(MObject key, MObject value) {
-        this.key = key;
-        this.value = value;
-    }
-}
-
 public class MHash implements MObject {
     private HashMap<HashKey, HashPair> pairs;
+
+    public MHash(final HashMap<HashKey, HashPair> pairs) {
+        this.pairs = pairs;
+    }
 
     @Override
     public MObjectType type() {
         return MObjectType.HASH;
+    }
+
+    public HashMap<HashKey, HashPair> getPairs() {
+        return this.pairs;
     }
 
     @Override

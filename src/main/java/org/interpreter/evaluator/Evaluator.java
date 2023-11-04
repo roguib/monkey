@@ -2,11 +2,12 @@ package org.interpreter.evaluator;
 
 import org.interpreter.ast.*;
 import org.interpreter.ast.Boolean;
+import org.interpreter.evaluator.object.HashKey;
+import org.interpreter.evaluator.object.HashPair;
+import org.interpreter.evaluator.object.Hashable;
+import org.interpreter.evaluator.object.MHash;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Evaluator {
 
@@ -187,6 +188,8 @@ public class Evaluator {
                 return index;
             }
             return evalIndexExpression(left, index);
+        } else if (node instanceof HashLiteral) {
+            return evalHashLiteral((HashLiteral) node, env);
         }
         return null;
     }
@@ -405,6 +408,31 @@ public class Evaluator {
             return NULL;
         }
         return array.getElements()[idx];
+    }
+
+    private static MObject evalHashLiteral(HashLiteral node, final Environment env) {
+        final HashMap<HashKey, HashPair> pairs = new HashMap<>();
+        final HashMap<Expression, Expression> expressions = node.getPairs();
+
+        for (Map.Entry<Expression, Expression> entry : expressions.entrySet()) {
+            final MObject key = eval(entry.getKey(), env);
+            if (key instanceof MError) {
+                return key;
+            }
+
+            if (!(key instanceof Hashable)) {
+                return new MError(key.type() + " cannot be used as a hash key");
+            }
+
+            final Hashable hashKey = ((Hashable) key);
+            final MObject value = eval(entry.getValue(), env);
+            if (value instanceof MError) {
+                return value;
+            }
+
+            pairs.put(hashKey.getHashKey(), new HashPair(key, value));
+        }
+        return new MHash(pairs);
     }
 
     private static boolean isTruthy(final MObject obj) {

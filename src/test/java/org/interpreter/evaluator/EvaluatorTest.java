@@ -4,6 +4,9 @@ import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.interpreter.ast.Identifier;
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
+import org.interpreter.evaluator.object.HashKey;
+import org.interpreter.evaluator.object.HashPair;
+import org.interpreter.evaluator.object.MHash;
 import org.interpreter.lexer.Lexer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,6 +15,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -427,6 +432,38 @@ public class EvaluatorTest {
             else {
                 testNullObject(evaluated);
             }
+        }
+    }
+
+    @Test
+    public void testHashLiterals() {
+        final String input =
+            "{" +
+                "\"one\": 10 - 9," +
+                "\"two\": 1 + 1," +
+                "\"three\": 6 / 2," +
+                "4: 4," +
+                "true: 5," +
+                "false: 6" +
+            "}";
+
+        final MObject evaluated = testEval(input);
+        final MHash result = (MHash) evaluated;
+
+        final HashMap<HashKey, Integer> expected = new HashMap<>();
+        expected.put(new MString("one").getHashKey(), 1);
+        expected.put(new MString("two").getHashKey(), 2);
+        expected.put(new MString("three").getHashKey(), 3);
+        expected.put(new MInteger(4).getHashKey(), 4);
+        expected.put(new MBoolean(true).getHashKey(), 5);
+        expected.put(new MBoolean(false).getHashKey(), 6);
+
+        final  HashMap<HashKey, HashPair> hashPairs = result.getPairs();
+        assertEquals(hashPairs.size(), expected.size());
+
+        for (Map.Entry<HashKey, Integer> entry : expected.entrySet()) {
+            assertTrue(hashPairs.containsKey(entry.getKey()));
+            testIntegerObject(hashPairs.get(entry.getKey()).value, entry.getValue());
         }
     }
 
