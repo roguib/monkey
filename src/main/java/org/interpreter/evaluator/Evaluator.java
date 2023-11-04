@@ -395,6 +395,8 @@ public class Evaluator {
     private static MObject evalIndexExpression(MObject left, MObject index) {
         if (left.type() == MObjectType.ARRAY && index.type() == MObjectType.INTEGER) {
             return evalArrayIndexExpression((MArray) left, (MInteger) index);
+        } else if (left.type() == MObjectType.HASH) {
+            return evalHashIndexExpression((MHash) left, index);
         } else {
             return new MError("index operator not supported: " + index.type());
         }
@@ -410,6 +412,20 @@ public class Evaluator {
         return array.getElements()[idx];
     }
 
+    private static MObject evalHashIndexExpression(MHash hash, MObject index) {
+        final Hashable key;
+        try {
+            key = (Hashable) index;
+        } catch (ClassCastException e) {
+            return new MError("unusable as hash key: " + index.type());
+        }
+        final HashPair pair = hash.getPairs().get(key.getHashKey());
+        if (pair == null) {
+            return NULL;
+        }
+        return pair.value;
+    }
+
     private static MObject evalHashLiteral(HashLiteral node, final Environment env) {
         final HashMap<HashKey, HashPair> pairs = new HashMap<>();
         final HashMap<Expression, Expression> expressions = node.getPairs();
@@ -421,7 +437,7 @@ public class Evaluator {
             }
 
             if (!(key instanceof Hashable)) {
-                return new MError(key.type() + " cannot be used as a hash key");
+                return new MError("unusable as hash key: " + key.type());
             }
 
             final Hashable hashKey = ((Hashable) key);

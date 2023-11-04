@@ -216,6 +216,7 @@ public class EvaluatorTest {
                 "foobar",
                 "\"Hello\" - \"World\"",
                 "[1, 2, 3][\"4\"]",
+                "{\"name\": \"Monkey\"}[fn(x) { x }];"
         };
         final String[] expected = {
                 "type mismatch: INTEGER + BOOLEAN",
@@ -228,6 +229,7 @@ public class EvaluatorTest {
                 "identifier not found: foobar",
                 "unknown operator: STRING - STRING",
                 "index operator not supported: STRING",
+                "unusable as hash key: FUNCTION"
         };
         assertEquals(input.length, expected.length);
         for (int i = 0; i < input.length; ++i) {
@@ -464,6 +466,47 @@ public class EvaluatorTest {
         for (Map.Entry<HashKey, Integer> entry : expected.entrySet()) {
             assertTrue(hashPairs.containsKey(entry.getKey()));
             testIntegerObject(hashPairs.get(entry.getKey()).value, entry.getValue());
+        }
+    }
+
+    @Test
+    public void testHashIndexExpressions() {
+        final Object[][] tests = {
+            new Object[]{
+                "{\"foo\": 5}[\"foo\"]",
+                5
+            },
+            new Object[]{
+                    "{\"foo\": 5}[\"bar\"]",
+                    null,
+            },
+            new Object[]{
+                "let key = \"foo\"; {\"foo\": 5}[key]",
+                5
+            },
+            new Object[]{
+                "{}[\"foo\"]",
+                null
+            },
+            new Object[]{
+                "{5: 5}[5]",
+                5
+            },
+            new Object[]{
+                "{true: 5}[true]",
+                5
+            },
+            new Object[]{
+                "{false: 5}[false]",
+                5
+            }
+        };
+
+        for (int i = 0; i < tests.length; ++i) {
+            final MObject evaluated = testEval((String) tests[i][0]);
+            if (tests[i][1] instanceof Integer) {
+                testIntegerObject(evaluated, (Integer) tests[i][1]);
+            } else testNullObject(evaluated);
         }
     }
 
