@@ -94,6 +94,14 @@ public class Evaluator {
             return new MArray(newElems);
         };
         builtins.put("push", new Builtin(pushFunction));
+
+        BuiltinInterface putsFunction = (MObject ...args) -> {
+            for (int i = 0; i < args.length; ++ i) {
+                System.out.println(args[i].inspect());
+            }
+            return NULL;
+        };
+        builtins.put("puts", new Builtin(putsFunction));
     }
     
     public static MObject eval(Node node, Environment env) {
