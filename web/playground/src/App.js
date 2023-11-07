@@ -1,12 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
-import { useNavigate } from 'react-router-dom';
+import logo from "./logo.svg";
+import "./App.css";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const navigate = useNavigate();
 
+  // eslint-disable-next-line no-unused-vars
   const createNewPlayground = ({ empty }) => {
-    navigate('/playground');
+    navigate("/playground");
   };
 
   return (
