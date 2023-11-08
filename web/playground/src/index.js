@@ -6,12 +6,17 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import App from "./App";
+import Playground from "./screens/playground/Playground";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
   },
+  {
+    path: "/playground",
+    element: <Playground />
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
