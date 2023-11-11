@@ -1,0 +1,13 @@
+server:
+  port: 7001
+  # location on classpath (e.g. src/main/resources/WEB in maven)
+  static.classpath:
+    location: "/WEB"
+    context: "/web"
+
+webservices:
+  monkey-ws:
+    description: "A ws that is in charge of evaluating monkey programs"
+    uri: "http://localhost:8080"
+    endpoints:
+      evaluate: "/evaluate"

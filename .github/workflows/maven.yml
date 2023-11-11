@@ -40,5 +40,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18
-    - name: Install dependencies and run tests
-      run: cd ./web/playground && npm i && npm run test
+    - name: Install playground dependencies
+      run: cd ./web/playground && npm i
+    - name: Build playground
+      run: cd ./web/playground && npm run build
+    - name: Run playground tests
+      run: cd ./web/playground && npm run test
