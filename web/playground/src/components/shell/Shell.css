@@ -1,0 +1,30 @@
+div[data-testid='shell'] {
+  height: 97vh;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border: 2px solid rgb(183, 191, 197);
+  border-radius: 5px;
+}
+
+ul.no-bullets {
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
+}
+
+ul.no-bullets li {
+  margin-left: 5px;
+}
+
+ul.no-bullets li[data-id="shell-result-separator"] {
+  margin-left: 0px;
+}
+
+ul.no-bullets li:nth-child(1) {
+  margin-top: 5px;
+}
+
+ul.no-bullets li:nth-child(n+2) {
+  margin-top: 10px;
+}

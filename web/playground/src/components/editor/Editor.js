@@ -38,7 +38,7 @@ function Editor({ onEditorChanged }) {
   return (
     <div className="Editor">
       <MonacoEditor
-        height="90vh"
+        height="100vh"
         defaultLanguage="javascript"
         defaultValue="// some comment"
         onChange={handleEditorChange}
