@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 @HelidonTest
-class PlaygroundEndpointTest {
-    private static final Logger LOGGER = Logger.getLogger(PlaygroundEndpoint.class.getName());
+class WebsocketEndpointTest {
+    private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final String RAW_PROGRAM = "let a = 1; a;";
     private static final String EXPECTED_EVAL_RESULT = "1";
 

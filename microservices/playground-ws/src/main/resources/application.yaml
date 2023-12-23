@@ -11,3 +11,8 @@ webservices:
     uri: "http://localhost:8080"
     endpoints:
       evaluate: "/evaluate"
+
+cache:
+  description: "Access to Redis cache"
+  host: "localhost"
+  port: 6379

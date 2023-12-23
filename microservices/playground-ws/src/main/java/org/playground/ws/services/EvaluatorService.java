@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
-import org.playground.ws.PlaygroundEndpoint;
+import org.playground.ws.WebsocketEndpoint;
 import io.helidon.webclient.api.HttpClientResponse;
 import io.helidon.webclient.api.WebClient;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,7 +16,7 @@ import jakarta.json.JsonObject;
 @ApplicationScoped
 public class EvaluatorService {
 
-    private static final Logger LOGGER = Logger.getLogger(PlaygroundEndpoint.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final JsonBuilderFactory JSON_BUILDER = Json.createBuilderFactory(Map.of());
 
     public String evaluate(String rawProgram) {

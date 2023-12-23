@@ -13,8 +13,8 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
 @ServerEndpoint(value = "/websocket")
-public class PlaygroundEndpoint {
-    private static final Logger LOGGER = Logger.getLogger(PlaygroundEndpoint.class.getName());
+public class WebsocketEndpoint {
+    private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
 
     @Inject
     private EvaluatorService evaluatorService;

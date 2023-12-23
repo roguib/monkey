@@ -6,7 +6,18 @@ function App() {
   const navigate = useNavigate();
 
   // eslint-disable-next-line no-unused-vars
-  const createNewPlayground = ({ empty }) => {
+  const createNewPlayground = async ({ empty }) => {
+    const data = await fetch("http://localhost:7001/playground/new", {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      }
+    });
+    if (!data.ok) {
+      // no-op
+    }
+    const { id } = await data.json();
+    console.log(`new playground created with id ${id}`);
     navigate("/playground");
   };
 
