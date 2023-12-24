@@ -12,14 +12,13 @@ const Shell = memo(function Shell({ evalResults }) {
     <div data-testid="shell">
       <ul className="no-bullets">
         {
-          evalResults.map((result, i) => {
-            console.log(result);
+          evalResults?.map((result, i) => {
             return i > 0 ? 
               (<>
-                <li data-id="shell-result-separator" key={i + 300000}><hr /></li>
-                <li key={i}>{result}</li>
+                <li data-testid="shell-separator" key={i + 300000}><hr /></li>
+                <li data-value={result} data-testid="shell-result" key={i}>{result}</li>
               </>) :
-              (<li key={i}>{result}</li>);
+              (<li data-value={result} data-testid="shell-result" key={i}>{result}</li>);
           })
         }
       </ul>

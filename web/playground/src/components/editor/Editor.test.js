@@ -16,9 +16,6 @@ jest.mock("./Editor", () => ({
 }));
 
 describe("Editor", () => {
-  beforeAll(() => {
-  });
-
   it("Renders Editor component", () => {
     Editor.mockReturnValue(<MonacoEditor />);
     render(<Editor />);
