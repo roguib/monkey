@@ -1,10 +1,11 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import {
   BrowserRouter,
 } from "react-router-dom";
 import "@testing-library/jest-dom";
 import App from "./App";
+import { FetchMock } from "../tests/FetchMock";
 
 const mockedUsedNavigate = jest.fn();
 
@@ -16,6 +17,8 @@ jest.mock("react-router-dom", () => ({
 
 describe("App", () => {
   it("renders App component", () => {
+    const fetchMock = new FetchMock();
+    fetchMock.addMock("http://localhost:7001/playground/new", { id: "abc-dfg-hij" });
     render(
       <BrowserRouter>
         <App />
@@ -28,12 +31,12 @@ describe("App", () => {
 
     // click button, check it navigates to /playground
     screen.getByTestId("playground-from-scratch").click();
-    expect(mockedUsedNavigate).toHaveBeenCalledWith("/playground");
+    waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith("/playground"));
 
     mockedUsedNavigate.mockReset();
 
     // click button, check it navigates to /playground
     screen.getByTestId("playground-from-template").click();
-    expect(mockedUsedNavigate).toHaveBeenCalledWith("/playground");
+    waitFor(() =>expect(mockedUsedNavigate).toHaveBeenCalledWith("/playground"));
   });
 });
