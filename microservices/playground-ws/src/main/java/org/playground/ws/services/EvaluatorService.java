@@ -1,12 +1,17 @@
 package org.playground.ws.services;
 
+import java.io.StringReader;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.google.gson.Gson;
 import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
+import jakarta.json.JsonReader;
 import javassist.NotFoundException;
 import org.playground.ws.EvalRequest;
+import org.playground.ws.EvalResponse;
+import org.playground.ws.Playground;
 import org.playground.ws.WebsocketEndpoint;
 import io.helidon.webclient.api.HttpClientResponse;
 import io.helidon.webclient.api.WebClient;
@@ -22,13 +27,14 @@ public class EvaluatorService {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final JsonBuilderFactory JSON_BUILDER = Json.createBuilderFactory(Map.of());
 
-    public String evaluate(EvalRequest evalRequest) throws NotFoundException {
+    public EvalResponse evaluate(EvalRequest evalRequest) throws NotFoundException {
+        final String playgroundId = evalRequest.getPlayground().getId();
         final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
         final JedisPooled jedis = cacheService.getCacheConnection();
-        if (jedis.get(evalRequest.getPlaygroundId()) == null) {
+        if (jedis.get(playgroundId) == null) {
             LOGGER.info("Attempting to evaluate a program on a playground id that doesn't exist. playgroundId: "
-                    + evalRequest.getPlaygroundId());
-            throw new NotFoundException("The playground identified by " + evalRequest.getPlaygroundId() + " was not found");
+                    + playgroundId);
+            throw new NotFoundException("The playground identified by " + playgroundId + " was not found");
         }
 
         LOGGER.info("About to evaluate program: " + evalRequest.getProgram());
@@ -52,8 +58,21 @@ public class EvaluatorService {
         }
 
         try (HttpClientResponse response = client.post(endpoint.get()).submit(programJson)) {
-            final String evalRes = response.as(String.class);
+            final String jsonEvalRes = response.as(String.class);
+            // todo: use a mapper json -> java object
+            JsonReader jsonReader = Json.createReader(new StringReader(jsonEvalRes));
+            JsonObject object = jsonReader.readObject();
+            jsonReader.close();
+
+            final EvalResponse evalRes = new EvalResponse(object.getString("result"), object.getString("status"));
             LOGGER.info("POST request to evaluate service executed with response: " + evalRes);
+            final Playground playground = evalRequest.getPlayground();
+            playground.addHistoryResult(evalRes.getResult());
+
+            Gson gson = new Gson();
+            String json = gson.toJson(playground);
+            jedis.set(playground.getId(), json);
+
             return evalRes;
         }
     }

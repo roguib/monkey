@@ -1,14 +1,17 @@
 package org.playground.ws.factory;
 
 import com.google.common.hash.Hashing;
+import com.google.gson.Gson;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
 import org.playground.ws.Playground;
 import org.playground.ws.WebsocketEndpoint;
 import org.playground.ws.services.CacheServiceImpl;
 import redis.clients.jedis.JedisPooled;
-import redis.clients.jedis.search.FTCreateParams;
-import redis.clients.jedis.search.IndexDataType;
-import redis.clients.jedis.search.schemafields.TextField;
 
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -22,8 +25,28 @@ public class PlaygroundFactory {
         // save the object in the cache, so we can start storing eval results
         final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
         JedisPooled jedis = cacheService.getCacheConnection();
-        jedis.set(playground.getId(), playground.getHistory().toString());
+        Gson gson = new Gson();
+        String json = gson.toJson(playground);
+        jedis.set(playground.getId(), json);
 
+        LOGGER.info("New playground created: " + playground);
+        return playground;
+    }
+
+    public static Playground getPlayground(final String playgroundId) {
+        final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
+        JedisPooled jedis = cacheService.getCacheConnection();
+        String playgroundJson = jedis.get(playgroundId);
+
+        JsonReader jsonReader = Json.createReader(new StringReader(playgroundJson));
+        JsonObject object = jsonReader.readObject();
+        jsonReader.close();
+
+        final Playground playground = new Playground(
+            playgroundId,
+            object.getJsonArray("history").getValuesAs(JsonString::getString)
+        );
+        LOGGER.info("New playground created: " + playground);
         return playground;
     }
 

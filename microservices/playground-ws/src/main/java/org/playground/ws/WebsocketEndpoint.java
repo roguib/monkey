@@ -1,11 +1,10 @@
 package org.playground.ws;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.logging.Logger;
 
-import jakarta.json.Json;
-import jakarta.json.JsonReader;
+import com.google.gson.Gson;
+import org.playground.ws.factory.EvalRequestFactory;
 import org.playground.ws.services.EvaluatorService;
 import jakarta.inject.Inject;
 import jakarta.websocket.OnClose;
@@ -14,7 +13,6 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
-import jakarta.json.JsonObject;
 
 @ServerEndpoint(value = "/websocket")
 public class WebsocketEndpoint {
@@ -44,13 +42,13 @@ public class WebsocketEndpoint {
     @OnMessage
     public void onMessage(Session session, String message) throws Exception {
         LOGGER.info("Message: " + message);
-        JsonReader jsonReader = Json.createReader(new StringReader(message));
-        JsonObject object = jsonReader.readObject();
-        jsonReader.close();
-        final EvalRequest evalRequest = new EvalRequest(object);
+        final EvalRequestFactory evalRequestFactory = new EvalRequestFactory();
+        final EvalRequest evalRequest =  evalRequestFactory.getEvalRequest(message);
+        LOGGER.info("evalRequest created with values: " + evalRequest);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
-        final String evalRes = evaluatorService.evaluate(evalRequest);
-        session.getBasicRemote().sendObject(evalRes);
+        final EvalResponse evalRes = evaluatorService.evaluate(evalRequest);
+        Gson gson = new Gson();
+        session.getBasicRemote().sendObject(gson.toJson(evalRes));
     }
 
     /**

@@ -10,14 +10,21 @@ import org.playground.ws.factory.PlaygroundFactory;
 /**
  * Manages the lifecycle of a playground
  */
-@Path("/playground/new")
+@Path("/playground")
 @RequestScoped
 public class PlaygroundResource {
     @POST
+    @Path("/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Playground createPlayground() {
         return PlaygroundFactory.getPlayground();
+    }
+
+    @GET
+    @Path("/{playgroundId}")
+    public Playground getPlayground(@PathParam("playgroundId") String playgroundId) {
+        return PlaygroundFactory.getPlayground(playgroundId);
     }
 
     /**

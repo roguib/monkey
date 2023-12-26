@@ -1,24 +1,20 @@
 package org.playground.ws;
 
-import jakarta.json.JsonObject;
-
 public class EvalRequest {
-    private static final String PLAYGROUND_ID = "playgroundId";
-    private static final String PROGRAM = "program";
-
-    public EvalRequest(final JsonObject object) {
-        this.playgroundId = object.getString("playgroundId");
-        this.program = object.getString("program");
-    }
-    private String playgroundId;
+    private Playground playground;
     private String program;
 
-    public String getPlaygroundId() {
-        return playgroundId;
+    public EvalRequest(final Playground playground, final String program) {
+        this.playground = playground;
+        this.program = program;
     }
 
-    public void setPlaygroundId(String playgroundId) {
-        this.playgroundId = playgroundId;
+    public Playground getPlayground() {
+        return playground;
+    }
+
+    public void setPlayground(Playground playground) {
+        this.playground = playground;
     }
 
     public String getProgram() {
@@ -31,6 +27,6 @@ public class EvalRequest {
 
     @Override
     public String toString() {
-        return "playgroundId: " + playgroundId + "\n" + program;
+        return "playgroundId: " + playground.getId() + "\n" + program;
     }
 }

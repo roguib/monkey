@@ -1,7 +1,7 @@
 import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
 import { useState, useCallback, useMemo } from "react";
-// import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import "./Playground.css";
 
@@ -10,6 +10,8 @@ function Playground() {
   const [messageHistory, setMessageHistory] = useState([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(WEBSOCKET_URL);
+
+  const { playgroundId } = useParams();
 
   useMemo(() => {
     if (lastMessage !== null) {
@@ -37,8 +39,10 @@ function Playground() {
   const handleEditorChanged = useCallback((program) => {
     console.log(connectionStatus);
     console.log(program);
-    // todo: send playground id so history can be saved
-    sendMessage(program);
+    sendMessage(JSON.stringify({
+      playgroundId,
+      program,
+    }));
   }, []);
 
 
