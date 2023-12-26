@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/playground",
+    path: "/playground/:playgroundId",
     element: <Playground />
   }
 ]);

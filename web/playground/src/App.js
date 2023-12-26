@@ -18,7 +18,7 @@ function App() {
     }
     const { id } = await data.json();
     console.log(`new playground created with id ${id}`);
-    navigate("/playground");
+    navigate(`/playground/${id}`);
   };
 
   return (
