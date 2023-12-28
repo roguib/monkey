@@ -6,6 +6,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonString;
+import jakarta.ws.rs.NotFoundException;
 import org.playground.ws.Playground;
 import org.playground.ws.WebsocketEndpoint;
 import org.playground.ws.services.CacheServiceImpl;
@@ -20,11 +21,10 @@ public class PlaygroundFactory {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     public static Playground getPlayground() {
         // generate new playground object with a unique id
-        final Playground playground = new Playground(PlaygroundFactory.generatePlaygroundUniqueId());
+        final Playground playground = new Playground(generatePlaygroundUniqueId());
 
         // save the object in the cache, so we can start storing eval results
-        final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
-        JedisPooled jedis = cacheService.getCacheConnection();
+        final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         Gson gson = new Gson();
         String json = gson.toJson(playground);
         jedis.set(playground.getId(), json);
@@ -34,11 +34,12 @@ public class PlaygroundFactory {
     }
 
     public static Playground getPlayground(final String playgroundId) {
-        final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
-        JedisPooled jedis = cacheService.getCacheConnection();
+        final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         String playgroundJson = jedis.get(playgroundId);
 
-        // todo: what if playgroundId is not found ??
+        if (playgroundJson == null) {
+            throw new NotFoundException();
+        }
 
         JsonReader jsonReader = Json.createReader(new StringReader(playgroundJson));
         JsonObject object = jsonReader.readObject();
@@ -52,12 +53,11 @@ public class PlaygroundFactory {
         return playground;
     }
 
-    private static String generatePlaygroundUniqueId() {
+    public static String generatePlaygroundUniqueId() {
         // generate initial id
         String id = PlaygroundFactory.generateId();
         // ensure the id is not in the Redis cache, otherwise generate another one
-        final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
-        JedisPooled jedis = cacheService.getCacheConnection();
+        final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         while (jedis.get(id) != null) {
             id = PlaygroundFactory.generateId();
         }

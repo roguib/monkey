@@ -29,8 +29,7 @@ public class EvaluatorService {
 
     public EvalResponse evaluate(EvalRequest evalRequest) throws NotFoundException {
         final String playgroundId = evalRequest.getPlayground().getId();
-        final CacheServiceImpl<JedisPooled> cacheService = new CacheServiceImpl<>();
-        final JedisPooled jedis = cacheService.getCacheConnection();
+        final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         if (jedis.get(playgroundId) == null) {
             LOGGER.info("Attempting to evaluate a program on a playground id that doesn't exist. playgroundId: "
                     + playgroundId);

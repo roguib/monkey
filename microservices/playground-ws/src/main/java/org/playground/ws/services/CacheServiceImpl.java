@@ -3,13 +3,12 @@ package org.playground.ws.services;
 import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
 import redis.clients.jedis.JedisPooled;
-import redis.clients.jedis.UnifiedJedis;
 
-public class CacheServiceImpl<J extends UnifiedJedis> implements CacheService<JedisPooled> {
+public class CacheServiceImpl implements CacheService {
     private static final String CACHE_HOST_CONFIG = "cache.host";
     private static final String CACHE_PORT_CONFIG = "cache.port";
 
-    public JedisPooled getCacheConnection() {
+    public static JedisPooled getCacheConnection() {
         Config config = Config.create();
         ConfigValue<String> cacheHost = config.get(CACHE_HOST_CONFIG).asString();
         if (!cacheHost.isPresent()) {

@@ -1,5 +1,9 @@
 package org.playground.ws.services;
 
-public interface CacheService <T> {
-    public T getCacheConnection();
+import redis.clients.jedis.JedisPooled;
+
+public interface CacheService {
+    static JedisPooled getCacheConnection() {
+        return null;
+    }
 }

@@ -21,7 +21,6 @@ import org.glassfish.tyrus.container.jdk.client.JdkClientContainer;
 import org.junit.jupiter.api.Test;
 import org.playground.ws.services.EvaluatorService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 

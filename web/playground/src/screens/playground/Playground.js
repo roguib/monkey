@@ -8,6 +8,7 @@ import "./Playground.css";
 function Playground() {
   const WEBSOCKET_URL = "ws://localhost:7001/websocket";
   const [history, setHistory] = useState([]);
+  const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
 
   const { sendMessage, lastMessage } = useWebSocket(WEBSOCKET_URL);
 
@@ -36,7 +37,11 @@ function Playground() {
         }
       });
       if (!data.ok) {
-        // no-op
+        if (data.status === 404) {
+          // it means the user is trying to load a playground that wasn´t found
+          setPlaygroundNotFound(true);
+          return;
+        }
       }
       const { history } = await data.json();
       setHistory(history);
@@ -50,7 +55,7 @@ function Playground() {
 
   /**
    * A function that sends the latest program to the server and waits
-   * for an evaluation (TBD)
+   * for an evaluation
    * @param {*} program
    */
   const handleEditorChanged = useCallback((program) => {
@@ -60,7 +65,12 @@ function Playground() {
     }));
   }, []);
 
-
+  if (playgroundNotFound) {
+    // todo: improve this screen
+    return (
+      <p>404 playground wasn't found</p>
+    );
+  }
   return (
     <div className="playground" data-testid="playground-screen">
       <div style={{width: "70vw"}}>
