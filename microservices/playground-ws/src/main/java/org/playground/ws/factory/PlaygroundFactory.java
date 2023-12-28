@@ -38,6 +38,8 @@ public class PlaygroundFactory {
         JedisPooled jedis = cacheService.getCacheConnection();
         String playgroundJson = jedis.get(playgroundId);
 
+        // todo: what if playgroundId is not found ??
+
         JsonReader jsonReader = Json.createReader(new StringReader(playgroundJson));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();

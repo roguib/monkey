@@ -1,35 +1,52 @@
 import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
-import { useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import useWebSocket from "react-use-websocket";
 import "./Playground.css";
 
 function Playground() {
   const WEBSOCKET_URL = "ws://localhost:7001/websocket";
-  const [messageHistory, setMessageHistory] = useState([]);
+  const [history, setHistory] = useState([]);
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(WEBSOCKET_URL);
+  const { sendMessage, lastMessage } = useWebSocket(WEBSOCKET_URL);
 
   const { playgroundId } = useParams();
 
+  const { state } = useLocation();
+
   useMemo(() => {
     if (lastMessage !== null) {
-      console.log(lastMessage);
       const evalData = JSON.parse(lastMessage.data);
       // we're ignoring status for now
-      setMessageHistory((prev) => prev.concat(evalData.result));
-      console.log(messageHistory);
+      setHistory((prev) => prev.concat(evalData.result));
     }
   }, [lastMessage]);
 
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: "Connecting",
-    [ReadyState.OPEN]: "Open",
-    [ReadyState.CLOSING]: "Closing",
-    [ReadyState.CLOSED]: "Closed",
-    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
-  }[readyState];
+  useEffect(() => {
+    const fn = async () => {
+      if (state?.skipFetchHistory) {
+        return;
+      }
+  
+      const data = await fetch(`http://localhost:7001/playground/${playgroundId}`, {
+        method: "GET",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        }
+      });
+      if (!data.ok) {
+        // no-op
+      }
+      const { history } = await data.json();
+      setHistory(history);
+    };
+    fn();
+    return () => {
+      // make sure location state is cleared on browser refresh
+      window.history.replaceState({}, document.title);
+    };
+  }, [state?.skipFetchHistory]);
 
   /**
    * A function that sends the latest program to the server and waits
@@ -37,8 +54,6 @@ function Playground() {
    * @param {*} program
    */
   const handleEditorChanged = useCallback((program) => {
-    console.log(connectionStatus);
-    console.log(program);
     sendMessage(JSON.stringify({
       playgroundId,
       program,
@@ -55,7 +70,7 @@ function Playground() {
       </div>
       <div style={{width: "30vw", height: "100vh"}}>
         <Shell 
-          evalResults={messageHistory}
+          evalResults={history}
         />
       </div>
     </div>

@@ -42,8 +42,7 @@ public class WebsocketEndpoint {
     @OnMessage
     public void onMessage(Session session, String message) throws Exception {
         LOGGER.info("Message: " + message);
-        final EvalRequestFactory evalRequestFactory = new EvalRequestFactory();
-        final EvalRequest evalRequest =  evalRequestFactory.getEvalRequest(message);
+        final EvalRequest evalRequest =  EvalRequestFactory.getEvalRequest(message);
         LOGGER.info("evalRequest created with values: " + evalRequest);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
         final EvalResponse evalRes = evaluatorService.evaluate(evalRequest);

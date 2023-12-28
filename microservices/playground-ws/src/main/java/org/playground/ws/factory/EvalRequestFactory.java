@@ -8,7 +8,7 @@ import org.playground.ws.EvalRequest;
 import java.io.StringReader;
 
 public class EvalRequestFactory {
-    public EvalRequest getEvalRequest(final String jsonString) {
+    public static EvalRequest getEvalRequest(final String jsonString) {
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
