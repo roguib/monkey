@@ -3,7 +3,7 @@ import Shell from "../../components/shell/Shell";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
-import "./Playground.css";
+import "./Playground.scss";
 
 function Playground() {
   const WEBSOCKET_URL = "ws://localhost:7001/websocket";
@@ -59,10 +59,12 @@ function Playground() {
    * @param {*} program
    */
   const handleEditorChanged = useCallback((program) => {
-    sendMessage(JSON.stringify({
-      playgroundId,
-      program,
-    }));
+    if (program) {
+      sendMessage(JSON.stringify({
+        playgroundId,
+        program,
+      }));
+    }
   }, []);
 
   if (playgroundNotFound) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { default as MonacoEditor } from "@monaco-editor/react";
-import "./Editor.css";
+import "./Editor.scss";
 
 
 /**
@@ -42,6 +42,11 @@ function Editor({ onEditorChanged }) {
         defaultLanguage="javascript"
         defaultValue="// some comment"
         onChange={handleEditorChange}
+        options={{
+          minimap: {
+            enabled: false,
+          },
+        }}
       />
     </div>
   );

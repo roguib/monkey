@@ -1,4 +1,4 @@
-import "./Shell.css";
+import "./Shell.scss";
 import { memo } from "react";
 
 /**

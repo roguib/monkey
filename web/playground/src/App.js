@@ -1,6 +1,7 @@
-import logo from "./logo.svg";
-import "./App.css";
+import logo from "./logo.png";
+import "./App.scss";
 import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 
 function App() {
   const navigate = useNavigate();
@@ -22,22 +23,29 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div>
-          <button 
+    <div className="container">
+      <div className="row d-flex justify-content-center align-items-center">
+        <div className="col-2 d-flex align-items-center justify-content-center">
+          <img src={logo} className="App-logo" alt="logo"/>
+        </div>
+        <span className="col-8 display-1">The Monkey Playground</span>
+      </div>
+      <div className="row d-flex align-items-center justify-content-center">
+        <div className="col-4 d-flex align-items-center justify-content-center">
+          <Button
             onClick={() => createNewPlayground({ empty: true })}
             data-testid="playground-from-scratch">
               New playground from scratch
-          </button>
-          <button 
+          </Button>
+        </div>
+        <div className="col-4 d-flex align-items-center justify-content-center">
+          <Button
             onClick={() => createNewPlayground({ empty: false })}
             data-testid="playground-from-template">
               New playground from template
-          </button>
+          </Button>
         </div>
-      </header>
+      </div>
     </div>
   );
 }
