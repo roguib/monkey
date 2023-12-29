@@ -1,4 +1,5 @@
 import "./Shell.scss";
+import ListGroup from "react-bootstrap/ListGroup";
 import { memo } from "react";
 
 /**
@@ -10,18 +11,15 @@ import { memo } from "react";
 const Shell = memo(function Shell({ evalResults }) {
   return (
     <div data-testid="shell">
-      <ul className="no-bullets">
+      <ListGroup>
         {
-          evalResults?.map((result, i) => {
-            return i > 0 ? 
-              (<>
-                <li data-testid="shell-separator" key={i + 300000}><hr /></li>
-                <li data-value={result} data-testid="shell-result" key={i}>{result}</li>
-              </>) :
-              (<li data-value={result} data-testid="shell-result" key={i}>{result}</li>);
-          })
+          evalResults?.map((result, i) => (
+            // eslint complains missing key
+            // eslint-disable-next-line
+            <ListGroup.Item eventKey={i}>{result}</ListGroup.Item>
+          ))
         }
-      </ul>
+      </ListGroup>
     </div>
   );
 });

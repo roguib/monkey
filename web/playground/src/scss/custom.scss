@@ -1,0 +1,17 @@
+// required to get scss variables working
+@import "~bootstrap/scss/functions"; 
+@import "~bootstrap/scss/variables";
+
+$primary: #1DB954;
+
+$body-color: #E0E0E0;
+$body-bg: #2C2F33;
+
+/* make the customizations */
+$theme-colors: (
+  'primary': $primary,
+  'danger': teal
+);
+
+/* import bootstrap to set changes */
+@import '~bootstrap/scss/bootstrap';

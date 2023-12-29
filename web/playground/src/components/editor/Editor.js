@@ -40,7 +40,7 @@ function Editor({ onEditorChanged }) {
       <MonacoEditor
         height="100vh"
         defaultLanguage="javascript"
-        defaultValue="// some comment"
+        theme="vs-dark"
         onChange={handleEditorChange}
         options={{
           minimap: {
