@@ -16,7 +16,7 @@ const Shell = memo(function Shell({ evalResults }) {
           evalResults?.map((result, i) => (
             // eslint complains missing key
             // eslint-disable-next-line
-            <ListGroup.Item eventKey={i}>{result}</ListGroup.Item>
+            <ListGroup.Item eventKey={i} data-testId="shell-result">{result}</ListGroup.Item>
           ))
         }
       </ListGroup>
