@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
-import org.playground.ws.factory.EvalRequestFactory;
+import org.playground.ws.factory.PlaygroundFactory;
 import org.playground.ws.services.EvaluatorService;
 import jakarta.inject.Inject;
 import jakarta.websocket.OnClose;
@@ -42,10 +42,10 @@ public class WebsocketEndpoint {
     @OnMessage
     public void onMessage(Session session, String message) throws Exception {
         LOGGER.info("Message: " + message);
-        final EvalRequest evalRequest =  EvalRequestFactory.getEvalRequest(message);
-        LOGGER.info("evalRequest created with values: " + evalRequest);
+        final Playground playground = PlaygroundFactory.getPlaygroundFromWsEvalRequest(message);
+        LOGGER.info("playground to be evaluated created with values: " + playground);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
-        final EvalResponse evalRes = evaluatorService.evaluate(evalRequest);
+        final EvalResponse evalRes = evaluatorService.evaluate(playground);
         Gson gson = new Gson();
         session.getBasicRemote().sendObject(gson.toJson(evalRes));
     }

@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Playground {
     private String id;
+    private String program;
     private ArrayList<String> history = new ArrayList<>(); // todo: this should be an array of date - eval result so it can be sorted in the client
 
     public Playground(final String id) {
@@ -22,6 +23,14 @@ public class Playground {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getProgram() {
+        return program;
+    }
+
+    public void setProgram(String program) {
+        this.program = program;
     }
 
     public ArrayList<String> getHistory() {

@@ -53,6 +53,19 @@ public class PlaygroundFactory {
         return playground;
     }
 
+    public static Playground getPlaygroundFromWsEvalRequest(final String jsonObject) {
+        JsonReader jsonReader = Json.createReader(new StringReader(jsonObject));
+        JsonObject object = jsonReader.readObject();
+        jsonReader.close();
+
+        final String playgroundId = object.getString("playgroundId");
+        final String program = object.getString("program");
+
+        final Playground playground = PlaygroundFactory.getPlayground(playgroundId);
+        playground.setProgram(program);
+        return playground;
+    }
+
     public static String generatePlaygroundUniqueId() {
         // generate initial id
         String id = PlaygroundFactory.generateId();

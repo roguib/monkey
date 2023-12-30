@@ -9,7 +9,6 @@ import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
 import jakarta.json.JsonReader;
 import javassist.NotFoundException;
-import org.playground.ws.EvalRequest;
 import org.playground.ws.EvalResponse;
 import org.playground.ws.Playground;
 import org.playground.ws.WebsocketEndpoint;
@@ -27,8 +26,8 @@ public class EvaluatorService {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final JsonBuilderFactory JSON_BUILDER = Json.createBuilderFactory(Map.of());
 
-    public EvalResponse evaluate(EvalRequest evalRequest) throws NotFoundException {
-        final String playgroundId = evalRequest.getPlayground().getId();
+    public EvalResponse evaluate(final Playground playground) throws NotFoundException {
+        final String playgroundId = playground.getId();
         final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         if (jedis.get(playgroundId) == null) {
             LOGGER.info("Attempting to evaluate a program on a playground id that doesn't exist. playgroundId: "
@@ -36,9 +35,9 @@ public class EvaluatorService {
             throw new NotFoundException("The playground identified by " + playgroundId + " was not found");
         }
 
-        LOGGER.info("About to evaluate program: " + evalRequest.getProgram());
+        LOGGER.info("About to evaluate program: " + playground.getProgram());
         JsonObject programJson = JSON_BUILDER.createObjectBuilder()
-                .add("rawProgram", evalRequest.getProgram())
+                .add("rawProgram", playground.getProgram())
                 .build();
         LOGGER.info("JsonObject successfully created: " + programJson.getString("rawProgram"));
 
@@ -65,7 +64,6 @@ public class EvaluatorService {
 
             final EvalResponse evalRes = new EvalResponse(object.getString("result"), object.getString("status"));
             LOGGER.info("POST request to evaluate service executed with response: " + evalRes);
-            final Playground playground = evalRequest.getPlayground();
             playground.addHistoryResult(evalRes.getResult());
 
             Gson gson = new Gson();
