@@ -10,7 +10,7 @@ import "./Editor.scss";
  * program written in the MonacoEditor
  * @returns
  */
-function Editor({ onEditorChanged }) {
+function Editor({ onEditorChanged, initialValue }) {
   const MS_TIMEOUT_TO_EVALUATE = 5000;
   const [lastModifiedTimeout, setLastModifiedTimeout] = useState(() => {});
 
@@ -41,6 +41,7 @@ function Editor({ onEditorChanged }) {
         height="100vh"
         defaultLanguage="javascript"
         theme="vs-dark"
+        defaultValue={initialValue}
         onChange={handleEditorChange}
         options={{
           minimap: {

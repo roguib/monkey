@@ -7,6 +7,7 @@ import "./Playground.scss";
 
 function Playground() {
   const WEBSOCKET_URL = "ws://localhost:7001/websocket";
+  const [program, setProgram] = useState("");
   const [history, setHistory] = useState([]);
   const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
 
@@ -43,7 +44,8 @@ function Playground() {
           return;
         }
       }
-      const { history } = await data.json();
+      const { program = "", history = [] } = await data.json();
+      setProgram(program);
       setHistory(history);
     };
     fn();
@@ -78,6 +80,7 @@ function Playground() {
       <div style={{width: "70vw"}}>
         <Editor
           onEditorChanged={handleEditorChanged}
+          initialValue={program}
         />
       </div>
       <div style={{width: "30vw", height: "100vh"}}>
