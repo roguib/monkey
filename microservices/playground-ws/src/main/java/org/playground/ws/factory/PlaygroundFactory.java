@@ -47,6 +47,7 @@ public class PlaygroundFactory {
 
         final Playground playground = new Playground(
             playgroundId,
+            object.getString("program"),
             object.getJsonArray("history").getValuesAs(JsonString::getString)
         );
         LOGGER.info("New playground created: " + playground);

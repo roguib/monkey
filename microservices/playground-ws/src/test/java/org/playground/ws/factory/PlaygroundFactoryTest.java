@@ -50,13 +50,14 @@ public class PlaygroundFactoryTest extends PlaygroundFactory {
     public void testPlaygroundExists() {
         final String MOCKED_PLAYGROUND_ID = "abc-842-123";
         final JedisPooledMocked jedisPooledMocked = new JedisPooledMocked();
-        jedisPooledMocked.setValueForKey(MOCKED_PLAYGROUND_ID, "{ \"playgroundId\": \"abc-842-123\", \"history\": [\"1\", \"2\"] }");
+        jedisPooledMocked.setValueForKey(MOCKED_PLAYGROUND_ID, "{ \"playgroundId\": \"abc-842-123\", \"program\": \"let a = 2;\\n a; \\n\", \"history\": [\"1\", \"2\"] }");
         try (MockedStatic<CacheServiceImpl> cacheServiceMocked = mockStatic(CacheServiceImpl.class)) {
             cacheServiceMocked.when(() -> CacheServiceImpl.getCacheConnection()).thenAnswer((Answer<JedisPooledMocked>) invocation -> jedisPooledMocked);
 
             final Playground playground = PlaygroundFactory.getPlayground(MOCKED_PLAYGROUND_ID);
 
             assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
+            assertEquals(playground.getProgram(), "let a = 2;\n a; \n");
             assertEquals(playground.getHistory(), new ArrayList<>(Arrays.asList(new String[]{"1", "2"})));
         }
     }

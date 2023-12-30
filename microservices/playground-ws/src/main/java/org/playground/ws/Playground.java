@@ -12,8 +12,9 @@ public class Playground {
         this.id = id;
     }
 
-    public Playground(final String id, final List<String> history) {
+    public Playground(final String id, final String program, final List<String> history) {
         this.id = id;
+        this.program = program;
         this.history = new ArrayList<>(history);
     }
 
