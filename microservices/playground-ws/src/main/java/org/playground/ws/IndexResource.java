@@ -6,7 +6,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 /**
- * Manages the lifecycle of a playground
+ * A single endpoint that returns the generated index.html file after building the frontend. The index.html
+ * contains the necessary links and scripts to download the extra js and css files, along with some images.
  */
 @Path("/")
 @RequestScoped
