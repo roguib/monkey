@@ -1,0 +1,16 @@
+# TODO: Ideally this docker-compose should contain also redis and other services
+
+version: '3.7' # specify docker-compose version
+
+services:
+  blogdb:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blogdb
+      POSTGRES_USER: user
+    volumes:
+      - ./data:/var/lib/postgresql
