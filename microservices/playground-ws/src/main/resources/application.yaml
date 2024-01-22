@@ -25,6 +25,6 @@ javax:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
         dataSource:
           #  https://github.com/brettwooldridge/HikariCP
-          url: jdbc:postgresql://localhost:5432/blogdb
-          user: user
+          url: jdbc:postgresql://localhost:5432/postgres
+          user: postgres
           password: password
