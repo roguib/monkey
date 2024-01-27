@@ -11,6 +11,11 @@ If Chrome starts blocking requests due to CORS, open a new Chrome window with th
 open -na Google\ Chrome --args --user-data-dir=/tmp/temporary-chrome-profile-dir --disable-web-security
 ```
 
+You'll also need to create a redis image
+
+````bash
+docker run --name monkey-redis -p 6379:6379 -d redis
+````
 ## Release
 Builds playground-ws and frontend sources for deployment.
 

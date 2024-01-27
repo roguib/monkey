@@ -1,0 +1,18 @@
+# TODO: Ideally this docker-compose should contain also redis and other services
+
+version: '3.7'
+
+services:
+  playground-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: playground
+    volumes:
+      - ./data:/var/lib/postgresql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: ["postgres", "-c", "log_statement=all"]

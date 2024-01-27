@@ -16,3 +16,15 @@ cache:
   description: "Access to Redis cache"
   host: "localhost"
   port: 6379
+
+# DB connection
+javax:
+  sql:
+    DataSource:
+      playgroundDataSource:
+        dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
+        dataSource:
+          #  https://github.com/brettwooldridge/HikariCP
+          url: jdbc:postgresql://localhost:5432/playground
+          user: postgres
+          password: password
