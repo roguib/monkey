@@ -6,23 +6,23 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.playground.ws.dao.Post;
-import org.playground.ws.repository.PostRepository;
+import org.playground.ws.dao.Template;
+import org.playground.ws.repository.TemplateRepository;
 
 import java.util.HashMap;
 
-@Path("/post")
+@Path("/template")
 @RequestScoped
-public class PostResource {
+public class TemplateResource {
     @Inject
-    private PostRepository postRepository;
+    private TemplateRepository templateRepository;
 
     @POST
     @Path("/new")
     @Produces(MediaType.APPLICATION_JSON)
-    public HashMap createPost() {
-        final Post p = Post.of("The first post in DB", "lorem ipsum");
-        postRepository.save(p);
+    public HashMap createTemplate() {
+        final Template p = Template.of("Template title", "Template description", "let a = 1;");
+        templateRepository.save(p);
         final HashMap<String, String> resp = new HashMap<>();
         resp.put("created", "ok");
         return resp;

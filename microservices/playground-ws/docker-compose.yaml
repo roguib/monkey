@@ -3,7 +3,7 @@
 version: '3.7'
 
 services:
-  blogdb:
+  playground-db:
     image: postgres
     ports:
       - "5432:5432"
@@ -11,7 +11,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: blogdb
+      POSTGRES_DB: playground
     volumes:
       - ./data:/var/lib/postgresql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     command: ["postgres", "-c", "log_statement=all"]

@@ -6,9 +6,9 @@ xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
                       https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
 version="3.0">
 <persistence-unit name="greeting" transaction-type="JTA">
-    <description>Persistence unit for the COVID dashboard</description>
-    <jta-data-source>blogDataSource</jta-data-source>
-    <class>org.playground.ws.dao.Post</class>
+    <description>Persistence unit for the Playground webservice</description>
+    <jta-data-source>playgroundDataSource</jta-data-source>
+    <class>org.playground.ws.dao.Template</class>
     <properties>
         <property name="eclipselink.deploy-on-startup" value="true"/>
         <property name="eclipselink.jdbc.native-sql" value="true"/>

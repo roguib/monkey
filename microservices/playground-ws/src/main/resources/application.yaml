@@ -21,10 +21,10 @@ cache:
 javax:
   sql:
     DataSource:
-      blogDataSource:
+      playgroundDataSource:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
         dataSource:
           #  https://github.com/brettwooldridge/HikariCP
-          url: jdbc:postgresql://localhost:5432/postgres
+          url: jdbc:postgresql://localhost:5432/playground
           user: postgres
           password: password
