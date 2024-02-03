@@ -1,10 +1,13 @@
 import logo from "./logo.png";
 import "./App.scss";
+import  TemplateDialog from "./components/templateDialog/TemplateDialog";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
+import { useState } from "react";
 
 function App() {
   const navigate = useNavigate();
+  const [showDialog, setShowDialog] = useState(false);
 
   // eslint-disable-next-line no-unused-vars
   const createNewPlayground = async ({ empty }) => {
@@ -41,13 +44,17 @@ function App() {
           </div>
           <div className="col-6 d-flex align-items-center justify-content-center">
             <Button
-              onClick={() => createNewPlayground({ empty: false })}
+              onClick={() => setShowDialog(true)}
               data-testid="playground-from-template">
                 New playground from template
             </Button>
           </div>
         </div>
       </div>
+      <TemplateDialog
+        show={showDialog}
+        onHide={() => setShowDialog(false)}
+      />
     </div>
   );
 }
