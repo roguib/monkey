@@ -26,7 +26,7 @@ public class PlaygroundFactory {
     public static Playground getPlayground(final CreatePlaygroundDto createPlaygroundDto, final TemplateRepository templateRepository) {
         // first check if we have to create a new playground from a template
         final String templateId = createPlaygroundDto.getTemplateId();
-        Optional<TemplateDao> templateDao = null;
+        Optional<TemplateDao> templateDao = Optional.empty();
         if (templateId != null) {
             templateDao = templateRepository.findById(templateId);
         }

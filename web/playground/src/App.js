@@ -40,7 +40,7 @@ function App() {
         <div className="row pt-4 d-flex align-items-center justify-content-center">
           <div className="col-6 d-flex align-items-center justify-content-center">
             <Button
-              onClick={() => createNewPlayground({ empty: true })}
+              onClick={() => createNewPlayground()}
               data-testid="playground-from-scratch">
                 New playground from scratch
             </Button>
