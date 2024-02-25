@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "templates", schema="public")
-public class Template implements Serializable {
+public class TemplateDao implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -24,8 +24,8 @@ public class Template implements Serializable {
     @Column(name = "program")
     String program;
 
-    public static Template of(String title, String description, String program) {
-        Template template = new Template();
+    public static TemplateDao of(String title, String description, String program) {
+        TemplateDao template = new TemplateDao();
         template.setTitle(title);
         template.setDescription(description);
         template.setProgram(program);
@@ -67,7 +67,7 @@ public class Template implements Serializable {
 
     @Override
     public String toString() {
-        return "Template{" +
+        return "TemplateDao{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

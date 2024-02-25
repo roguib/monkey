@@ -8,7 +8,7 @@ version="3.0">
 <persistence-unit name="greeting" transaction-type="JTA">
     <description>Persistence unit for the Playground webservice</description>
     <jta-data-source>playgroundDataSource</jta-data-source>
-    <class>org.playground.ws.dao.Template</class>
+    <class>org.playground.ws.dao.TemplateDao</class>
     <properties>
         <property name="eclipselink.deploy-on-startup" value="true"/>
         <property name="eclipselink.jdbc.native-sql" value="true"/>

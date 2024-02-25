@@ -3,15 +3,16 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useEffect, useState } from "react";
+import Placeholder from "react-bootstrap/Placeholder";
 
-/**
- *
- */
-function TemplateDialog(props) {
-  const loadTemplates = async () => {
+const ListData = (props) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTemplates = async () => {
     let templates = [];
     try {
-      const data = await fetch("http://localhost:7001/playground/templates", {
+      const data = await fetch("http://localhost:7001/templates", {
         method: "GET",
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -30,18 +31,56 @@ function TemplateDialog(props) {
     return templates;
   };
 
-  const [templates, setTemplates] = useState([]);
-
   useEffect(() => {
-    const fn = async () => {
-      const templates = await loadTemplates();
-      setTemplates(templates);
+    const fetchDataAsync = async () => {
+      const result = await fetchTemplates();
+      setLoading(false);
+      setData(result);
     };
-    if (props.show) {
-      fn();
-    }
-  }, [props.show]);
 
+    if (!data?.length) {
+      fetchDataAsync();
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <Placeholder as="p" animation="glow">
+          <Placeholder xs={12} />
+          <Placeholder xs={6} />
+        </Placeholder>
+        <Placeholder as="p" animation="glow">
+          <Placeholder xs={12} />
+          <Placeholder xs={6} />
+        </Placeholder>
+        <Placeholder as="p" animation="glow">
+          <Placeholder xs={12} />
+          <Placeholder xs={6} />
+        </Placeholder>
+      </>
+    );
+  }
+
+  return (<>
+    {
+      data?.map(({ id, title, description }, i) => (
+        // eslint complains missing key
+        // eslint-disable-next-line
+        <ListGroup.Item
+          eventKey={i+id}
+          onClick={() => props.onTemplateSelected(id)}
+          action
+        >
+          <h5>{title}</h5>
+          <p>{description}</p>
+        </ListGroup.Item>
+      ))
+    }
+  </>);
+};
+
+const TemplateDialog = (props) => {
   return (
     <Modal
       {...props}
@@ -57,21 +96,7 @@ function TemplateDialog(props) {
       <Modal.Body>
         <p>You can start experimenting with the Monkey programming language by picking one of the templates that showcase the different features of the language.</p>
         <ListGroup>
-          {
-            templates.map(({ id, title, description }, i) => (
-              // eslint complains missing key
-              // eslint-disable-next-line
-              <ListGroup.Item
-                eventKey={i}
-                onClick={() => {}}
-                action
-              >
-                <span>{id}</span>
-                <span>{title}</span>
-                <span>{description}</span>
-              </ListGroup.Item>
-            ))
-          }
+          <ListData onTemplateSelected={props.onTemplateSelected} />
         </ListGroup>
       </Modal.Body>
       <Modal.Footer>
@@ -79,6 +104,6 @@ function TemplateDialog(props) {
       </Modal.Footer>
     </Modal>
   );
-}
+};
 
 export default TemplateDialog;

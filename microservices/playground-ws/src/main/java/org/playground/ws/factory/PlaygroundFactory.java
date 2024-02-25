@@ -9,19 +9,39 @@ import jakarta.json.JsonString;
 import jakarta.ws.rs.NotFoundException;
 import org.playground.ws.Playground;
 import org.playground.ws.WebsocketEndpoint;
+import org.playground.ws.dao.TemplateDao;
+import org.playground.ws.dto.CreatePlaygroundDto;
+import org.playground.ws.repository.TemplateRepository;
 import org.playground.ws.services.CacheServiceImpl;
 import redis.clients.jedis.JedisPooled;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class PlaygroundFactory {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
-    public static Playground getPlayground() {
+    public static Playground getPlayground(final CreatePlaygroundDto createPlaygroundDto, final TemplateRepository templateRepository) {
+        // first check if we have to create a new playground from a template
+        final String templateId = createPlaygroundDto.getTemplateId();
+        Optional<TemplateDao> templateDao = null;
+        if (templateId != null) {
+            templateDao = templateRepository.findById(templateId);
+        }
+
+        if (templateDao.isEmpty() && templateId != null) {
+            throw new NotFoundException();
+        }
+
         // generate new playground object with a unique id
         final Playground playground = new Playground(generatePlaygroundUniqueId());
+
+        // if the user has selected a template, init the playground with the corresponding code
+        if (templateDao.isPresent()) {
+            playground.setProgram(templateDao.get().getProgram());
+        }
 
         // save the object in the cache, so we can start storing eval results
         final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
