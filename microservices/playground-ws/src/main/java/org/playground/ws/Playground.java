@@ -10,6 +10,7 @@ public class Playground {
 
     public Playground(final String id) {
         this.id = id;
+        this.program = "";
     }
 
     public Playground(final String id, final String program, final List<String> history) {
@@ -48,6 +49,6 @@ public class Playground {
 
     @Override
     public String toString() {
-        return "playgroundId" + id + " history: " + history;
+        return "playgroundId" + id + " history: " + history + " program: " + program;
     }
 }

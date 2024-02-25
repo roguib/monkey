@@ -8,7 +8,6 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonString;
 import jakarta.ws.rs.NotFoundException;
 import org.playground.ws.Playground;
-import org.playground.ws.WebsocketEndpoint;
 import org.playground.ws.dao.TemplateDao;
 import org.playground.ws.dto.CreatePlaygroundDto;
 import org.playground.ws.repository.TemplateRepository;
@@ -22,7 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 public class PlaygroundFactory {
-    private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PlaygroundFactory.class.getName());
     public static Playground getPlayground(final CreatePlaygroundDto createPlaygroundDto, final TemplateRepository templateRepository) {
         // first check if we have to create a new playground from a template
         final String templateId = createPlaygroundDto.getTemplateId();
@@ -75,6 +74,7 @@ public class PlaygroundFactory {
     }
 
     public static Playground getPlaygroundFromWsEvalRequest(final String jsonObject) {
+        LOGGER.info("Getting playground from json object: " + jsonObject);
         JsonReader jsonReader = Json.createReader(new StringReader(jsonObject));
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
