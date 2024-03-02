@@ -1,38 +1,52 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitForElementToBeRemoved } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Editor from "./Editor";
-import { default as MonacoEditor } from "@monaco-editor/react";
-import userEvent from "@testing-library/user-event";
+import TemplateDialog from "./TemplateDialog";
 
-
-const mockedHandleEditorChange = jest.fn();
-
-jest.mock("./Editor", () => ({
-  __esModule: true,
-  ...jest.requireActual("./Editor"),
-  default: jest.fn(),
-  handleEditorChange: () => mockedHandleEditorChange,
-}));
-
-describe("Editor", () => {
-  it("Renders Editor component", () => {
-    Editor.mockReturnValue(<MonacoEditor />);
-    render(<Editor />);
-
-    // ensure monaco editor loads correctly
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+jest.mock('../../services/TemplateService.js', () => {
+  const originalModule = jest.requireActual('../../services/TemplateService.js');
+  return {
+    __esModule: true,
+    ...originalModule,
+    fetchTemplates: () => jest.fn(() => [{ id: '1', title: 'title', description: 'description' }])
+  };
+});
+describe("TemplateDialog", () => {
+  it("Doesn't render TemplateDialog if show prop is false", () => {
+    render(<TemplateDialog show={false} onTemplateSelected={() => {}} />);
+    expect(screen.queryByTestId("template-dialog")).toBeNull();
   });
 
-  it("Reacts to changes from the editor", async () => {
-    Editor.mockReturnValue(<input data-testid="monaco-input-area" onChange={mockedHandleEditorChange} />);
-    const user = userEvent.setup();
+  it("Renders TemplateDialog if show prop is true", () => {
+    render(<TemplateDialog show={true} onTemplateSelected={() => {}} />);
+    expect(screen.queryByTestId("template-dialog")).toBeInTheDocument();
+  });
 
-    render(<Editor />);
-    screen.debug();
+  it("Dialog is closed", async () => {
+    const mockedCloseDialogFn = jest.fn();
+    render(<TemplateDialog show={true} onTemplateSelected={() => {}} onHide={mockedCloseDialogFn} />);
+    const closeBtn = screen.queryByTestId("template-dialog-close-btn");
+    expect(closeBtn).toBeInTheDocument();
+    closeBtn.click();
+    expect(mockedCloseDialogFn).toHaveBeenCalled();
+  });
 
-    expect(screen.getByTestId("monaco-input-area")).toBeInTheDocument();
-    await user.type(screen.getByTestId("monaco-input-area"), "input code from the user");
-    expect(mockedHandleEditorChange).toHaveBeenCalled();
+  it("Correctly loads a list of templates", async () => {
+    render(<TemplateDialog show={true} onTemplateSelected={() => {}} />);
+    expect(screen.queryByTestId("template-dialog")).toBeInTheDocument();
+    // await loading animation disappears
+    await waitForElementToBeRemoved(() => screen.getAllByTestId('loading-templates-placeholder'));
+    // expects the list of templates to be present in the dialog after loading completes
+    expect(screen.queryByTestId("template-list-group-item-1")).toBeInTheDocument();
+  });
+
+  it("Correctly selects one template", async () => {
+    const mockedOnTemplateSelected = jest.fn();
+    render(<TemplateDialog show={true} onTemplateSelected={mockedOnTemplateSelected} />);
+    // await loading animation disappears
+    await waitForElementToBeRemoved(() => screen.getAllByTestId('loading-templates-placeholder'));
+    // click one item of the list
+    screen.queryByTestId("template-list-group-item-1").click();
+    expect(mockedOnTemplateSelected).toHaveBeenCalledWith('1');
   });
 });

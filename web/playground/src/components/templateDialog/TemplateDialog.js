@@ -4,32 +4,11 @@ import Modal from "react-bootstrap/Modal";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useEffect, useState } from "react";
 import Placeholder from "react-bootstrap/Placeholder";
+import { fetchTemplates } from "../../services/TemplateService";
 
 const ListData = (props) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchTemplates = async () => {
-    let templates = [];
-    try {
-      const data = await fetch("http://localhost:7001/templates", {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        }
-      });
-      if (!data.ok) {
-        // no-op
-      }
-      templates = (await data.json())?.templates;
-      if (!templates.length) {
-        // TODO: Show alert an error has happened while loading templates
-      }
-    } catch (error) {
-      // no-op
-    }
-    return templates;
-  };
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -45,7 +24,7 @@ const ListData = (props) => {
 
   if (loading) {
     return (
-      <>
+      <div data-testid="loading-templates-placeholder">
         <Placeholder as="p" animation="glow">
           <Placeholder xs={12} />
           <Placeholder xs={6} />
@@ -58,7 +37,7 @@ const ListData = (props) => {
           <Placeholder xs={12} />
           <Placeholder xs={6} />
         </Placeholder>
-      </>
+      </div>
     );
   }
 
@@ -70,10 +49,13 @@ const ListData = (props) => {
         <ListGroup.Item
           eventKey={i+id}
           onClick={() => props.onTemplateSelected(id)}
+          data-testid={`template-list-group-item-${id}`}
           action
         >
-          <h5>{title}</h5>
-          <p>{description}</p>
+          <div>
+            <h5>{title}</h5>
+            <p>{description}</p>
+          </div>
         </ListGroup.Item>
       ))
     }
@@ -84,6 +66,7 @@ const TemplateDialog = (props) => {
   return (
     <Modal
       {...props}
+      data-testid="template-dialog"
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -100,7 +83,7 @@ const TemplateDialog = (props) => {
         </ListGroup>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
+        <Button data-testid="template-dialog-close-btn" onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
   );
