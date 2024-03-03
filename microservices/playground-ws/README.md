@@ -16,6 +16,23 @@ You'll also need to create a redis image
 ````bash
 docker run --name monkey-redis -p 6379:6379 -d redis
 ````
+
+## Debug
+If you use Idea, or any editor with remote debugging capabilities, the easiest option is to create a remote debugging configuration while running the jar containing the MP project.
+
+Create a new configuration in your editor:
+1. debugger mode: `Attach to remote JVM`
+2. host: `localhost`
+3. port: `5005`
+4. `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005`
+
+Run the jar and wait for the debugger process to attach to it.
+```bash
+ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar target/playground-ws.jar
+```
+
+After the java process is running, go to your editor and attach the debugger.
+
 ## Release
 Builds playground-ws and frontend sources for deployment.
 

@@ -6,7 +6,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
-import org.playground.ws.dao.Template;
+import org.playground.ws.dao.TemplateDao;
 import org.playground.ws.dao.Post_;
 
 import java.util.List;
@@ -18,20 +18,20 @@ public class TemplateRepository {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<Template> findAll() {
+    public List<TemplateDao> findAll() {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         // create query
-        CriteriaQuery<Template> query = cb.createQuery(Template.class);
+        CriteriaQuery<TemplateDao> query = cb.createQuery(TemplateDao.class);
         // set the root class
-        Root<Template> root = query.from(Template.class);
+        Root<TemplateDao> root = query.from(TemplateDao.class);
         //perform query
         return this.entityManager.createQuery(query).getResultList();
     }
 
-    public Optional<Template> findById(String id) {
-        Template template = null;
+    public Optional<TemplateDao> findById(String id) {
+        TemplateDao template = null;
         try {
-            template = this.entityManager.find(Template.class, id);
+            template = this.entityManager.find(TemplateDao.class, id);
         } catch (NoResultException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class TemplateRepository {
     }
 
     @Transactional
-    public Template save(Template template) {
+    public TemplateDao save(TemplateDao template) {
         if (template.getId() == null) {
             this.entityManager.persist(template);
             return template;
@@ -48,28 +48,13 @@ public class TemplateRepository {
         }
     }
 
-    //@Transactional
-    //public int updateStatus(String id, Template.Status status) {
-    //    CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-    //    // create update
-    //    CriteriaUpdate<Template> delete = cb.createCriteriaUpdate(Template.class);
-    //    // set the root class
-    //    Root<Template> root = delete.from(Template.class);
-    //    // set where clause
-    //    delete.set(root.get(Post_.status), status);
-    //    delete.where(cb.equal(root.get(Post_.id), id));
-    //    // perform update
-    //    return this.entityManager.createQuery(delete).executeUpdate();
-    //}
-
-
     @Transactional
     public int deleteById(String id) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         // create delete
-        CriteriaDelete<Template> delete = cb.createCriteriaDelete(Template.class);
+        CriteriaDelete<TemplateDao> delete = cb.createCriteriaDelete(TemplateDao.class);
         // set the root class
-        Root<Template> root = delete.from(Template.class);
+        Root<TemplateDao> root = delete.from(TemplateDao.class);
         // set where clause
         delete.where(cb.equal(root.get(Post_.id), id));
         // perform update

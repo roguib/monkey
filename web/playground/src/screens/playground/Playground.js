@@ -47,6 +47,12 @@ function Playground() {
       const { program = "", history = [] } = await data.json();
       setProgram(program);
       setHistory(history);
+
+      if (program && !history.length) {
+        // TODO: This should already come in the history array. We shouldn't need an extra computation
+        // of a known value
+        handleEditorChanged(program);
+      }
     };
     fn();
     return () => {

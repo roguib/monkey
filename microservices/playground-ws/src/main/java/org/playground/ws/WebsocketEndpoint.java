@@ -43,7 +43,7 @@ public class WebsocketEndpoint {
     public void onMessage(Session session, String message) throws Exception {
         LOGGER.info("Message: " + message);
         final Playground playground = PlaygroundFactory.getPlaygroundFromWsEvalRequest(message);
-        LOGGER.info("playground to be evaluated created with values: " + playground);
+        LOGGER.info("playground to be evaluated with values: " + playground);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
         final EvalResponse evalRes = evaluatorService.evaluate(playground);
         Gson gson = new Gson();

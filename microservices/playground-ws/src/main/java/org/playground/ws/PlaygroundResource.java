@@ -2,10 +2,17 @@ package org.playground.ws;
 
 import io.helidon.microprofile.cors.CrossOrigin;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.playground.ws.dto.CreatePlaygroundDto;
 import org.playground.ws.factory.PlaygroundFactory;
+import org.playground.ws.repository.TemplateRepository;
 
 /**
  * Manages the lifecycle of a playground
@@ -13,12 +20,17 @@ import org.playground.ws.factory.PlaygroundFactory;
 @Path("/playground")
 @RequestScoped
 public class PlaygroundResource {
+    @Inject
+    private TemplateRepository templateRepository;
     @POST
     @Path("/new")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Playground createPlayground() {
-        return PlaygroundFactory.getPlayground();
+    @RequestBody(name = "templateId",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(type = SchemaType.OBJECT, requiredProperties = { "templateId" })))
+    public Playground createPlayground(final CreatePlaygroundDto createPlaygroundDto) {
+        return PlaygroundFactory.getPlayground(createPlaygroundDto, templateRepository);
     }
 
     @GET
