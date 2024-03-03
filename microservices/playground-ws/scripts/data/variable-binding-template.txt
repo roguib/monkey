@@ -1,4 +1,3 @@
 let five = 5;
-let ten = 10;
-five = ten;
-five;
+let ten = 10 + five;
+ten;
