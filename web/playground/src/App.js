@@ -25,7 +25,7 @@ function App() {
     }
     const { id } = await data.json();
     console.log(`new playground created with id ${id}`);
-    navigate(`/playground/${id}`, { state: { skipFetchHistory: true } });
+    navigate(`/playground/${id}`, { state: { skipFetchHistory: !templateId ? true : false } });
   };
 
   return (

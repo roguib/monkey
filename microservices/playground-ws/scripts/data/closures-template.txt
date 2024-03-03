@@ -1,0 +1,15 @@
+let multiplication = fn(x, y) {
+    if (x > y) {
+        return x * y;
+    }
+    else {
+        return y * x;
+    }
+}
+
+let newAdder = fn(x) {
+    fn(y) { x + y };
+};
+
+let addTwo = newAdder(2);
+multiplication(5, 5) + addTwo(2);

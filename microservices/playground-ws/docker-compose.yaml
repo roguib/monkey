@@ -13,6 +13,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: playground
     volumes:
-      - ./data:/var/lib/postgresql
+      - ./scripts/data/variable-binding-template.txt:/data/variable-binding-template.txt
+      - ./scripts/data/control-flow-template.txt:/data/control-flow-template.txt
+      - ./scripts/data/closures-template.txt:/data/closures-template.txt
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     command: ["postgres", "-c", "log_statement=all"]
