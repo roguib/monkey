@@ -15,6 +15,8 @@ services:
     volumes:
       - ./scripts/data/variable-binding-template.txt:/data/variable-binding-template.txt
       - ./scripts/data/control-flow-template.txt:/data/control-flow-template.txt
+      - ./scripts/data/array-builtin-fn-template.txt:/data/array-builtin-fn-template.txt
+      - ./scripts/data/dictionary-template.txt:/data/dictionary-template.txt
       - ./scripts/data/closures-template.txt:/data/closures-template.txt
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     command: ["postgres", "-c", "log_statement=all"]

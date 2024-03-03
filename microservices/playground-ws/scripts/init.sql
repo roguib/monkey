@@ -27,6 +27,28 @@ SET program = (
 )
 WHERE id = 'controlFlow';
 
+INSERT INTO templates VALUES('arrayBuiltinFn', 'Arrays and built in functions', 'Arrays data structure as well as built in functions to work with arrays', '');
+UPDATE templates
+SET program = (
+    SELECT program
+    FROM (
+        SELECT *
+        FROM pg_read_file('/data/array-builtin-fn-template.txt')
+    ) AS data(program)
+)
+WHERE id = 'arrayBuiltinFn';
+
+INSERT INTO templates VALUES('dictionary', 'Dictionary data structure', 'Working with dictionaries', '');
+UPDATE templates
+SET program = (
+    SELECT program
+    FROM (
+        SELECT *
+        FROM pg_read_file('/data/dictionary-template.txt')
+    ) AS data(program)
+)
+WHERE id = 'dictionary';
+
 INSERT INTO templates VALUES('closures', 'Closures', 'Closures in Monkey language', '');
 UPDATE templates
 SET program = (

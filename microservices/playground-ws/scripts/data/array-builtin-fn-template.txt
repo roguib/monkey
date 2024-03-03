@@ -1,0 +1,6 @@
+let arr = [1, 2 * 2, 3 + 3, 4];
+
+let variable = 97;
+let newArr = [len(arr), len(arr) == 3, first(arr), last(arr), [99, 98, variable], arr[1]];
+let pushResult = push(newArr, 25);
+pushResult;

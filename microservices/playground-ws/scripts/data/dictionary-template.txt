@@ -1,0 +1,5 @@
+let dicc = { "foo": 5, "var": 10 };
+let five = dicc["foo"];
+let ten = dicc["var"];
+let add = five + ten + dicc["foo"];
+add;
