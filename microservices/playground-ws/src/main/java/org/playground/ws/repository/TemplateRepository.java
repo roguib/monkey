@@ -7,7 +7,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import org.playground.ws.dao.TemplateDao;
-import org.playground.ws.dao.Post_;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +55,7 @@ public class TemplateRepository {
         // set the root class
         Root<TemplateDao> root = delete.from(TemplateDao.class);
         // set where clause
-        delete.where(cb.equal(root.get(Post_.id), id));
+        delete.where(cb.equal(root.get("id"), id));
         // perform update
         return this.entityManager.createQuery(delete).executeUpdate();
     }
