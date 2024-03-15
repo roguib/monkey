@@ -44,26 +44,6 @@
                             <compilerArgument>-proc:none</compilerArgument>
                         </configuration>
                     </plugin>
-                    <plugin>
-                        <groupId>com.ethlo.persistence.tools</groupId>
-                        <artifactId>eclipselink-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>weave</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>weave</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>modelgen</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>modelgen</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -79,7 +59,6 @@
                         <!-- Use the latest released version:
                         https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                         <version>1.15.0</version>
-
                         <executions>
                             <execution>
                                 <id>install node and npm</id>
@@ -121,6 +100,22 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>io.smallrye</groupId>
+                        <artifactId>jandex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-index</id>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgument>-proc:none</compilerArgument>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.3.1</version>
                         <executions>
@@ -138,42 +133,6 @@
                                         </resource>
                                     </resources>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.smallrye</groupId>
-                        <artifactId>jandex-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>make-index</id>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgument>-proc:none</compilerArgument>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.ethlo.persistence.tools</groupId>
-                        <artifactId>eclipselink-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>weave</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>weave</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>modelgen</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>modelgen</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -284,6 +243,12 @@
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>4.0.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>6.4.4.Final</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
