@@ -30,7 +30,8 @@ public class PlaygroundResource {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(type = SchemaType.OBJECT, requiredProperties = { "templateId" })))
     public Playground createPlayground(final CreatePlaygroundDto createPlaygroundDto) {
-        return PlaygroundFactory.getPlayground(createPlaygroundDto, templateRepository);
+        final PlaygroundFactory playgroundFactory = new PlaygroundFactory(templateRepository);
+        return playgroundFactory.getPlayground(createPlaygroundDto);
     }
 
     @GET
