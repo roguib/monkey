@@ -2,7 +2,6 @@ package org.playground.ws.factory;
 
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
-import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -24,8 +23,6 @@ import java.util.logging.Logger;
 public class PlaygroundFactory {
     private static final Logger LOGGER = Logger.getLogger(PlaygroundFactory.class.getName());
     private TemplateRepository templateRepository;
-
-    @Inject
 
     public PlaygroundFactory(TemplateRepository templateRepository) {
         this.templateRepository = templateRepository;
