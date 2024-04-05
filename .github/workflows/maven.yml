@@ -30,10 +30,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Pull postgres
-      run: docker pull postgres
-    - name: Setup postgres
-      run: docker run -itd -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=playground -p 5432:5432 -v --name postgres
     - name: Build monkey-ws
       run: cd ./microservices/monkey-ws/ &&  mvn clean install --file pom.xml -DskipTests
     - name: Test monkey-ws
