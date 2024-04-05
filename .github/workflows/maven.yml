@@ -34,9 +34,13 @@ jobs:
       run: cd ./microservices/monkey-ws/ &&  mvn clean install --file pom.xml -DskipTests
     - name: Test monkey-ws
       run: cd ./microservices/monkey-ws/ && mvn test --file pom.xml
+    - name: Build playground-ws
+      run: cd ./microservices/playground-ws/ &&  mvn clean install --file pom.xml -Pdev -DskipTests
+    - name: Test playground-ws
+      run: cd ./microservices/playground-ws/ && mvn test --file pom.xml
 
       # setup node 18, test playground
-    - name: Build monkey-ws
+    - name: Setup node 18
       uses: actions/setup-node@v3
       with:
         node-version: 18

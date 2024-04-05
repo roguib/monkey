@@ -1,12 +1,15 @@
 package org.playground.ws.factory;
 
 import io.helidon.microprofile.testing.junit5.HelidonTest;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.*;
+
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.playground.ws.Playground;
 import org.playground.ws.dao.TemplateDao;
@@ -23,8 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@HelidonTest
-public class PlaygroundFactoryTest extends PlaygroundFactory {
+public class PlaygroundFactoryTest {
+
+    @Mock
+    private TemplateRepository templateRepository;
+    private PlaygroundFactory playgroundFactory;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this); // this is needed for initialization of mocks, if you use @Mock
+        playgroundFactory = new PlaygroundFactory(templateRepository);
+    }
 
     @Test
     public void testNewPlayground() {
@@ -35,7 +47,7 @@ public class PlaygroundFactoryTest extends PlaygroundFactory {
             try (MockedStatic<PlaygroundFactory> playgroundFactoryMocked = mockStatic(PlaygroundFactory.class, Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS))) {
                 playgroundFactoryMocked.when(() -> PlaygroundFactory.generatePlaygroundUniqueId()).thenAnswer((Answer<String>) invocation -> MOCKED_PLAYGROUND_ID);
 
-                final Playground playground = PlaygroundFactory.getPlayground(new CreatePlaygroundDto(), null);
+                final Playground playground = this.playgroundFactory.getPlayground(new CreatePlaygroundDto());
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
                 assertEquals(playground.getHistory().size(), 0);
@@ -43,8 +55,6 @@ public class PlaygroundFactoryTest extends PlaygroundFactory {
         }
     }
 
-    @Inject
-    private TemplateRepository templateRepository;
     @Test
     public void testNewPlaygroundFromTemplate() {
         final JedisPooledMocked jedisPooledMocked = new JedisPooledMocked();
@@ -57,14 +67,12 @@ public class PlaygroundFactoryTest extends PlaygroundFactory {
                         .when(() -> PlaygroundFactory.generatePlaygroundUniqueId()).thenAnswer((Answer<String>) invocation -> MOCKED_PLAYGROUND_ID);
 
                 final String MOCKED_PROGRAM = "let a = 1; a;";
-                TemplateRepository templateRepository = mock(TemplateRepository.class);
                 final Optional<TemplateDao> mockedFindByResponse = Optional.of(
                         TemplateDao.of("Mocked title", "Mocked description", MOCKED_PROGRAM)
                 );
-                when(templateRepository.findById(any()))
-                        .thenReturn(mockedFindByResponse);
-                final Playground playground = PlaygroundFactory
-                        .getPlayground(new CreatePlaygroundDto("Mocked Template Id"), templateRepository);
+                doReturn(mockedFindByResponse).when(this.templateRepository).findById(any());
+                final Playground playground = this.playgroundFactory
+                        .getPlayground(new CreatePlaygroundDto("Mocked Template Id"));
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
                 assertEquals(playground.getProgram(), MOCKED_PROGRAM);
@@ -86,11 +94,10 @@ public class PlaygroundFactoryTest extends PlaygroundFactory {
                         .when(() -> PlaygroundFactory.generatePlaygroundUniqueId())
                         .thenAnswer((Answer<String>) invocation -> MOCKED_PLAYGROUND_ID);
 
-                TemplateRepository templateRepository = mock(TemplateRepository.class);
                 final Optional<TemplateDao> mockedFindByResponse = Optional.empty();
-                when(templateRepository.findById(any())).thenReturn(mockedFindByResponse);
+                when(this.templateRepository.findById(any())).thenReturn(mockedFindByResponse);
                 assertThrows(NotFoundException.class, () ->
-                        PlaygroundFactory.getPlayground(new CreatePlaygroundDto("Mocked Template Id"), templateRepository)
+                        this.playgroundFactory.getPlayground(new CreatePlaygroundDto("Mocked Template Id"))
                 );
             }
         }

@@ -22,12 +22,18 @@ import java.util.logging.Logger;
 
 public class PlaygroundFactory {
     private static final Logger LOGGER = Logger.getLogger(PlaygroundFactory.class.getName());
-    public static Playground getPlayground(final CreatePlaygroundDto createPlaygroundDto, final TemplateRepository templateRepository) {
+    private TemplateRepository templateRepository;
+
+    public PlaygroundFactory(TemplateRepository templateRepository) {
+        this.templateRepository = templateRepository;
+    }
+
+    public Playground getPlayground(final CreatePlaygroundDto createPlaygroundDto) {
         // first check if we have to create a new playground from a template
         final String templateId = createPlaygroundDto.getTemplateId();
         Optional<TemplateDao> templateDao = Optional.empty();
         if (templateId != null) {
-            templateDao = templateRepository.findById(templateId);
+            templateDao = this.templateRepository.findById(templateId);
         }
 
         if (templateDao.isEmpty() && templateId != null) {
