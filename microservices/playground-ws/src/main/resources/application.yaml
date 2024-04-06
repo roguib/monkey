@@ -14,7 +14,7 @@ webservices:
 
 cache:
   description: "Access to Redis cache"
-  host: "localhost"
+  host: "monkey-redis"
   port: 6379
 
 # DB connection
@@ -25,6 +25,6 @@ javax:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
         dataSource:
           #  https://github.com/brettwooldridge/HikariCP
-          url: jdbc:postgresql://localhost:5432/playground
+          url: jdbc:postgresql://playground-db:5432/playground
           user: postgres
           password: password
