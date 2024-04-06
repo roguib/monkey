@@ -22,6 +22,7 @@ ADD microservices/playground-ws/src src
 # Incremental docker builds will always resume after that, unless you update
 # the pom
 ADD microservices/playground-ws/pom.xml .
+# TODO: is this really needed? -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
 RUN mvn package -Prelease -Dmaven.test.skip -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
 
 # Do the Maven build!

@@ -11,18 +11,28 @@ RUN set -x && \
     mv apache-maven-* maven && \
     ln -s /usr/share/maven/bin/mvn /bin/
 
+WORKDIR /monkey
+# Add monkey interpreter so when monkey-ws is built it knows where to get it
+ADD pom.xml pom.xml
+ADD src src
+RUN mvn clean install package -Dmaven.test.skip
+
 WORKDIR /helidon
 
 # Create a first layer to cache the "Maven World" in the local repository.
 # Incremental docker builds will always resume after that, unless you update
 # the pom
-ADD pom.xml pom.xml
+ADD microservices/monkey-ws/pom.xml pom.xml
+# TODO: is this really needed? -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
 RUN mvn package -Dmaven.test.skip -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
 
 # Do the Maven build!
 # Incremental docker builds will resume here when you change sources
-ADD src src
+ADD microservices/monkey-ws/src src
 RUN mvn package -DskipTests
+
+WORKDIR /helidon/target
+RUN ls -la
 
 RUN echo "done!"
 
