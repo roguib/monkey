@@ -23,8 +23,7 @@ WORKDIR /helidon
 # Incremental docker builds will always resume after that, unless you update
 # the pom
 ADD microservices/monkey-ws/pom.xml pom.xml
-# TODO: is this really needed? -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
-RUN mvn package -Dmaven.test.skip -Declipselink.weave.skip -Declipselink.weave.skip -DskipOpenApiGenerate
+RUN mvn package -Dmaven.test.skip
 
 # Do the Maven build!
 # Incremental docker builds will resume here when you change sources
