@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-  # docker run --name monkey-redis -p 6379:6379 -d redis
   monkey-redis:
     image: redis
     ports:

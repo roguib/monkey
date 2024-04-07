@@ -30,9 +30,6 @@ RUN mvn package -Dmaven.test.skip
 ADD microservices/monkey-ws/src src
 RUN mvn package -DskipTests
 
-WORKDIR /helidon/target
-RUN ls -la
-
 RUN echo "done!"
 
 # 2nd stage, build the runtime image
