@@ -8,7 +8,7 @@ server:
 webservices:
   monkey-ws:
     description: "A ws that is in charge of evaluating monkey programs"
-    uri: "http://localhost:8080"
+    uri: "http://monkey-ws:8080"
     endpoints:
       evaluate: "/evaluate"
 

@@ -39,6 +39,16 @@ services:
       - "7001:7001"
     networks:
       - playground-network
+  monkey-ws:
+    depends_on:
+      - playground-ws
+    build:
+      context: .
+      dockerfile: ./microservices/monkey-ws/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - playground-network
 networks:
   playground-network:
     name: playground-network
