@@ -61,15 +61,19 @@
                         <version>1.15.0</version>
                         <executions>
                             <execution>
-                                <id>install node and npm</id>
+                                <id>install node and yarn</id>
                                 <goals>
-                                    <goal>install-node-and-npm</goal>
+                                    <goal>install-node-and-yarn</goal>
                                 </goals>
+                                <configuration>
+                                    <yarnVersion>v1.22.22</yarnVersion>
+                                    <nodeVersion>v18.18.2</nodeVersion>
+                                </configuration>
                             </execution>
                             <execution>
-                                <id>install npm dependencies</id>
+                                <id>install yarn dependencies</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>yarn</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>install</arguments>
