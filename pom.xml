@@ -23,4 +23,3 @@
         </dependency>
     </dependencies>
 </project>
-<!-- mvn clean install  \-\-gs ~/.m2-personal/settings.xml \-\-s ~/.m2-personal/settings.xml -->

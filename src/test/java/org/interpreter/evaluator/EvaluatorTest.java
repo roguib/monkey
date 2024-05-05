@@ -1,6 +1,5 @@
 package org.interpreter.evaluator;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.interpreter.ast.Identifier;
 import org.interpreter.ast.Parser;
 import org.interpreter.ast.Program;
@@ -8,13 +7,11 @@ import org.interpreter.evaluator.object.HashKey;
 import org.interpreter.evaluator.object.HashPair;
 import org.interpreter.evaluator.object.MHash;
 import org.interpreter.lexer.Lexer;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

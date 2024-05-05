@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  monkey-redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - playground-network
+    restart: always
+  playground-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - playground-network
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: playground
+    volumes:
+      - ./microservices/playground-ws/scripts/data/variable-binding-template.txt:/data/variable-binding-template.txt
+      - ./microservices/playground-ws/scripts/data/control-flow-template.txt:/data/control-flow-template.txt
+      - ./microservices/playground-ws/scripts/data/array-builtin-fn-template.txt:/data/array-builtin-fn-template.txt
+      - ./microservices/playground-ws/scripts/data/dictionary-template.txt:/data/dictionary-template.txt
+      - ./microservices/playground-ws/scripts/data/closures-template.txt:/data/closures-template.txt
+      - ./microservices/playground-ws/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: ["postgres", "-c", "log_statement=all"]
+  playground-ws:
+    depends_on:
+      - playground-db
+      - monkey-redis
+    build:
+      context: .
+      dockerfile: ./microservices/playground-ws/Dockerfile
+    ports:
+      - "7001:7001"
+    networks:
+      - playground-network
+  monkey-ws:
+    depends_on:
+      - playground-ws
+    build:
+      context: .
+      dockerfile: ./microservices/monkey-ws/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - playground-network
+networks:
+  playground-network:
+    name: playground-network
