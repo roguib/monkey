@@ -8,13 +8,15 @@ import "./index.scss";
 import App from "./App";
 import Playground from "./screens/playground/Playground";
 
+const url = window.location.pathname;
+
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: `${url}/`,
     element: <App />,
   },
   {
-    path: "/playground/:playgroundId",
+    path: `${url}/playground/:playgroundId`,
     element: <Playground />
   }
 ]);
