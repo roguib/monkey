@@ -82,7 +82,7 @@
                             <execution>
                                 <id>run react build</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>yarn</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>run build</arguments>
