@@ -164,6 +164,7 @@
             <artifactId>jandex</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+            <version>3.1.2</version>
         </dependency>
         <dependency>
             <groupId>io.helidon.microprofile.testing</groupId>
