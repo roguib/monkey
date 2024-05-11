@@ -1,7 +1,10 @@
+import { Configuration } from "../Configuration.js";
+
 export async function fetchTemplates() {
   let templates = [];
   try {
-    const data = await fetch("http://localhost:7001/templates", {
+    const uri = `http://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}`;
+    const data = await fetch(`${uri}/templates`, {
       method: "GET",
       headers: {
         "Access-Control-Allow-Origin": "*",
