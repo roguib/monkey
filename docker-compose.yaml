@@ -33,6 +33,9 @@ services:
       - monkey-redis
     build:
       context: .
+      args:
+        BASE_URL: "localhost"
+        BASE_URL_PORT: "7001"
       dockerfile: ./microservices/playground-ws/Dockerfile
     ports:
       - "7001:7001"

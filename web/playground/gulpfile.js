@@ -20,6 +20,10 @@ function defaultTask(cb) {
   const baseUrl = argv.baseUrl;
   const port = argv.port;
 
+  console.log('=============GULP VARIABLES=============');
+  console.log(baseUrl);
+  console.log(port);
+
   // create Configuration.js file
   fs.writeFileSync(
     `${__dirname}/src/Configuration.js`,
@@ -27,6 +31,9 @@ function defaultTask(cb) {
     { flag: 'w' }
   );
 
+  console.log('=============GENERATED CONFIGURATION.JS FILE=============');
+  console.log(ConfigurationJs(baseUrl, port));
+  
   // finish async task
   cb();
 }

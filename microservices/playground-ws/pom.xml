@@ -80,6 +80,16 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>create Configuration</id>
+                                <goals>
+                                    <goal>gulp</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>--baseUrl=${base.url} --port=${base.url.port}</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>run react build</id>
                                 <goals>
                                     <goal>yarn</goal>
