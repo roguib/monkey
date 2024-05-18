@@ -37,5 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
+### Environment ###
+prod.env
+
 ### Other ###
 notes.md
