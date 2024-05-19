@@ -5,9 +5,11 @@ FROM container-registry.oracle.com/java/openjdk:21 as build
 
 ARG BASE_URL
 ARG BASE_URL_PORT
+ARG BASE_URL_PATH
 
 RUN echo "BASE_URL variable is $BASE_URL"
 RUN echo "BASE_URL_PORT variable is $BASE_URL_PORT"
+RUN echo "BASE_URL_PATH variable is $BASE_URL_PATH"
 
 # Install maven
 WORKDIR /usr/share
@@ -28,12 +30,12 @@ ADD microservices/playground-ws/src src
 # Incremental docker builds will always resume after that, unless you update
 # the pom
 ADD microservices/playground-ws/pom.xml .
-RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" package -Prelease -Dmaven.test.skip
+RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -Dmaven.test.skip
 
 # Do the Maven build!
 # Incremental docker builds will resume here when you change sources
 ADD microservices/playground-ws/src src
-RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" package -Prelease -DskipTests
+RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -DskipTests
 
 RUN echo "done!"
 

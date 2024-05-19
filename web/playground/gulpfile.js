@@ -1,7 +1,7 @@
 const { argv } = require('yargs');
 const fs = require('node:fs');
 
-const ConfigurationJs = (baseUrl, port) => `
+const ConfigurationJs = (baseUrl, port, path) => `
 class Configuration {
   static get baseUrl() {
     return "${baseUrl}";
@@ -9,6 +9,10 @@ class Configuration {
 
   static get port() {
     return "${port}";
+  }
+
+  static get path() {
+    return "${path}";
   }
 }
 
@@ -19,10 +23,12 @@ function defaultTask(cb) {
   // get env variables
   const baseUrl = argv.baseUrl;
   const port = argv.port;
+  const path = argv.baseUrlPath;
 
   console.log('=============GULP VARIABLES=============');
   console.log(baseUrl);
   console.log(port);
+  console.log(path);
 
   // create Configuration.js file
   fs.writeFileSync(
@@ -32,8 +38,8 @@ function defaultTask(cb) {
   );
 
   console.log('=============GENERATED CONFIGURATION.JS FILE=============');
-  console.log(ConfigurationJs(baseUrl, port));
-  
+  console.log(ConfigurationJs(baseUrl, port, path));
+
   // finish async task
   cb();
 }

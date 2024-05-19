@@ -3,7 +3,7 @@ import { Configuration } from "../Configuration.js";
 export async function fetchTemplates() {
   let templates = [];
   try {
-    const uri = `http://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}`;
+    const uri = `http://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}`;
     const data = await fetch(`${uri}/templates`, {
       method: "GET",
       headers: {

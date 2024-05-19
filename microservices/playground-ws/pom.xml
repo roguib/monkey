@@ -86,7 +86,7 @@
                                 </goals>
                                 <phase>generate-resources</phase>
                                 <configuration>
-                                    <arguments>--baseUrl=${base.url} --port=${base.url.port}</arguments>
+                                    <arguments>--baseUrl=${base.url} --port=${base.url.port} --baseUrlPath=${base.url.path}</arguments>
                                 </configuration>
                             </execution>
                             <execution>

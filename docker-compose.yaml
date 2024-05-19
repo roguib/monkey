@@ -36,6 +36,7 @@ services:
       args:
         BASE_URL: $BASE_URL
         BASE_URL_PORT: $BASE_URL_PORT
+        BASE_URL_PATH: $BASE_URL_PATH
       dockerfile: ./microservices/playground-ws/Dockerfile
     ports:
       - "7001:7001"
