@@ -30,15 +30,17 @@ function defaultTask(cb) {
   console.log(port);
   console.log(path);
 
+  const configFile = ConfigurationJs(baseUrl, port, path);
+
   // create Configuration.js file
   fs.writeFileSync(
     `${__dirname}/src/Configuration.js`,
-    ConfigurationJs(baseUrl, port),
+    configFile,
     { flag: 'w' }
   );
 
   console.log('=============GENERATED CONFIGURATION.JS FILE=============');
-  console.log(ConfigurationJs(baseUrl, port, path));
+  console.log(configFile);
 
   // finish async task
   cb();
