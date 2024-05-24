@@ -3,11 +3,13 @@
 # 1st stage, build the app
 FROM container-registry.oracle.com/java/openjdk:21 as build
 
-ARG BASE_URL
+ARG BASE_URL_PROTOCOL
+ARG BASE_URL_DOMAIN
 ARG BASE_URL_PORT
 ARG BASE_URL_PATH
 
-RUN echo "BASE_URL variable is $BASE_URL"
+RUN echo "BASE_URL_PROTOCOL variable is $BASE_URL_PROTOCOL"
+RUN echo "BASE_URL_DOMAIN variable is $BASE_URL_DOMAIN"
 RUN echo "BASE_URL_PORT variable is $BASE_URL_PORT"
 RUN echo "BASE_URL_PATH variable is $BASE_URL_PATH"
 
@@ -30,12 +32,12 @@ ADD microservices/playground-ws/src src
 # Incremental docker builds will always resume after that, unless you update
 # the pom
 ADD microservices/playground-ws/pom.xml .
-RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -Dmaven.test.skip
+RUN mvn -Dbase.url.protocol="$BASE_URL_PROTOCOL" -Dbase.url.domain="$BASE_URL_DOMAIN" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -Dmaven.test.skip
 
 # Do the Maven build!
 # Incremental docker builds will resume here when you change sources
 ADD microservices/playground-ws/src src
-RUN mvn -Dbase.url="$BASE_URL" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -DskipTests
+RUN mvn -Dbase.url.protocol="$BASE_URL_PROTOCOL" -Dbase.url.domain="$BASE_URL_DOMAIN" -Dbase.url.port="$BASE_URL_PORT" -Dbase.url.path="$BASE_URL_PATH" package -Prelease -Dmaven.test.skip
 
 RUN echo "done!"
 
