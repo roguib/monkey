@@ -46,6 +46,12 @@ public class PlaygroundResource {
      * https://github.com/helidon-io/helidon/pull/8166
      */
     @OPTIONS
-    @CrossOrigin(value = {"https://www.roguib.com"})
-    public void optionsForPlayground() {}
+    @Path("/new")
+    @CrossOrigin(value = {"https://www.roguib.com"}, allowMethods = {HttpMethod.POST})
+    public void optionsForNewPlayground() {}
+
+    @OPTIONS
+    @Path("/{playgroundId}")
+    @CrossOrigin(value = {"https://www.roguib.com"}, allowMethods = {HttpMethod.GET})
+    public void optionsForGetPlayground() {}
 }
