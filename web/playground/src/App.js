@@ -4,26 +4,14 @@ import  TemplateDialog from "./components/templateDialog/TemplateDialog";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
+import { createPlayground } from "./services/PlaygroundService";
 
 function App() {
   const navigate = useNavigate();
   const [showDialog, setShowDialog] = useState(false);
 
   const createNewPlayground = async (templateId) => {
-    const data = await fetch("http://localhost:7001/playground/new", {
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        templateId
-      })
-    });
-    if (!data.ok) {
-      // no-op
-    }
-    const { id } = await data.json();
+    const id = await createPlayground(templateId);
     console.log(`new playground created with id ${id}`);
     navigate(`/playground/${id}`, { state: { skipFetchHistory: !templateId ? true : false } });
   };
