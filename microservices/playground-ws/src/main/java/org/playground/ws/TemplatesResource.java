@@ -1,8 +1,10 @@
 package org.playground.ws;
 
+import io.helidon.microprofile.cors.CrossOrigin;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -30,4 +32,13 @@ public class TemplatesResource {
         res.put("templates", templates);
         return res;
     }
+
+    /**
+     * Enable CORS
+     * There's currently a bug in Helidon MP that doesn't consider port when matching origins
+     * https://github.com/helidon-io/helidon/pull/8166
+     */
+    @OPTIONS
+    @CrossOrigin(value = {"https://www.roguib.com"})
+    public void optionsForTemplate() {}
 }

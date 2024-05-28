@@ -46,6 +46,6 @@ public class PlaygroundResource {
      * https://github.com/helidon-io/helidon/pull/8166
      */
     @OPTIONS
-    @CrossOrigin(value = {"http://localhost:3000/"})
+    @CrossOrigin(value = {"https://www.roguib.com"})
     public void optionsForPlayground() {}
 }

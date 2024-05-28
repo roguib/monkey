@@ -1,6 +1,7 @@
 package org.playground.ws;
 
 import io.helidon.common.configurable.Resource;
+import io.helidon.microprofile.cors.CrossOrigin;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -17,4 +18,13 @@ public class IndexResource {
     public String getPlayground() {
         return Resource.create("WEB/index.html").string();
     }
+
+    /**
+     * Enable CORS
+     * There's currently a bug in Helidon MP that doesn't consider port when matching origins
+     * https://github.com/helidon-io/helidon/pull/8166
+     */
+    @OPTIONS
+    @CrossOrigin(value = {"https://www.roguib.com"})
+    public void optionsForIndex() {}
 }
