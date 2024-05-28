@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import { createPlayground } from "./services/PlaygroundService";
+import { Configuration } from "./Configuration";
 
 function App() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ function App() {
   const createNewPlayground = async (templateId) => {
     const id = await createPlayground(templateId);
     console.log(`new playground created with id ${id}`);
-    navigate(`/playground/${id}`, { state: { skipFetchHistory: !templateId ? true : false } });
+    navigate(`${Configuration.path}${id}`, { state: { skipFetchHistory: !templateId ? true : false } });
   };
 
   return (
