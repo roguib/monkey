@@ -9,8 +9,12 @@ import jakarta.ws.rs.core.MediaType;
 /**
  * A single endpoint that returns the generated index.html file after building the frontend. The index.html
  * contains the necessary links and scripts to download the extra js and css files, along with some images.
+ * Since we serve a React application that handles itself the routing state, we want all request that do not
+ * contain /api/ to be redirected to the index, and let React handle the routing magic
+ * For the rest of paths, we want the appropriate resources to take care of them
  */
-@Path("/")
+
+@Path("/{path: (?!api).*}")
 @RequestScoped
 public class IndexResource {
     @GET

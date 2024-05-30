@@ -2,11 +2,13 @@ import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
+import { getPlaygroundHistory } from "../../services/PlaygroundService";
 import useWebSocket from "react-use-websocket";
+import { Configuration } from "../../Configuration";
 import "./Playground.scss";
 
 function Playground() {
-  const WEBSOCKET_URL = "ws://localhost:7001/websocket";
+  const WEBSOCKET_URL = `${Configuration.protocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}api/websocket`;
   const [program, setProgram] = useState("");
   const [history, setHistory] = useState([]);
   const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
@@ -30,28 +32,20 @@ function Playground() {
       if (state?.skipFetchHistory) {
         return;
       }
-  
-      const data = await fetch(`http://localhost:7001/playground/${playgroundId}`, {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        }
-      });
-      if (!data.ok) {
-        if (data.status === 404) {
-          // it means the user is trying to load a playground that wasn´t found
-          setPlaygroundNotFound(true);
-          return;
-        }
-      }
-      const { program = "", history = [] } = await data.json();
-      setProgram(program);
-      setHistory(history);
 
-      if (program && !history.length) {
-        // TODO: This should already come in the history array. We shouldn't need an extra computation
-        // of a known value
-        handleEditorChanged(program);
+      try {
+        const { program = "", history = [] } = await getPlaygroundHistory(playgroundId);
+        setProgram(program);
+        setHistory(history);
+
+        if (program && !history.length) {
+          // TODO: This should already come in the history array. We shouldn't need an extra computation
+          // of a known value
+          handleEditorChanged(program);
+        }
+      } catch (error) {
+        setPlaygroundNotFound(true);
+        return;
       }
     };
     fn();

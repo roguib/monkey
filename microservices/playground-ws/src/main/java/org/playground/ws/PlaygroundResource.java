@@ -17,7 +17,7 @@ import org.playground.ws.repository.TemplateRepository;
 /**
  * Manages the lifecycle of a playground
  */
-@Path("/playground")
+@Path("api/playground")
 @RequestScoped
 public class PlaygroundResource {
     @Inject

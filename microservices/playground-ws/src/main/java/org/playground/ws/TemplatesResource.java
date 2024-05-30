@@ -14,7 +14,7 @@ import org.playground.ws.repository.TemplateRepository;
 import java.util.HashMap;
 import java.util.List;
 
-@Path("/templates")
+@Path("api/templates")
 @RequestScoped
 public class TemplatesResource {
     @Inject

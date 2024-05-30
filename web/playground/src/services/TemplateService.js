@@ -4,7 +4,7 @@ export async function fetchTemplates() {
   let templates = [];
   try {
     const uri = `${Configuration.protocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}`;
-    const data = await fetch(`${uri}templates`, {
+    const data = await fetch(`${uri}api/templates`, {
       method: "GET",
       headers: {
         "Access-Control-Allow-Origin": "*",

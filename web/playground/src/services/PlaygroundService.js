@@ -1,9 +1,10 @@
 import { Configuration } from "../Configuration.js";
 
+const uri = `${Configuration.protocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}api/playground/`;
+
 export async function createPlayground(templateId) {
   try {
-    const uri = `${Configuration.protocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}`;
-    const data = await fetch(`${uri}playground/new`, {
+    const data = await fetch(`${uri}new`, {
       method: "POST",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -22,6 +23,17 @@ export async function createPlayground(templateId) {
     // no-op
   }
   return "";
+}
+
+export async function getPlaygroundHistory(playgroundId) {
+  const data = await fetch(`${uri}${playgroundId}`, {
+    method: "GET",
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json"
+    }
+  });
+  return data.json();
 }
 
 
