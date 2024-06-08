@@ -41,7 +41,7 @@ function Editor({ onEditorChanged, initialValue }) {
         height="100vh"
         defaultLanguage="javascript"
         theme="vs-dark"
-        defaultValue={initialValue}
+        value={initialValue}
         onChange={handleEditorChange}
         options={{
           minimap: {
