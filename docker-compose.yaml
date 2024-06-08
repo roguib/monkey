@@ -38,6 +38,7 @@ services:
         BASE_URL_DOMAIN: $BASE_URL_DOMAIN
         BASE_URL_PORT: $BASE_URL_PORT
         BASE_URL_PATH: $BASE_URL_PATH
+        WEBSOCKET_PROTOCOL: $WEBSOCKET_PROTOCOL
       dockerfile: ./microservices/playground-ws/Dockerfile
     ports:
       - "7001:7001"

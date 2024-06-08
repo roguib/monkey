@@ -86,7 +86,7 @@
                                 </goals>
                                 <phase>generate-resources</phase>
                                 <configuration>
-                                    <arguments>--baseUrlProtocol=${base.url.protocol} --baseUrlDomain=${base.url.domain} --baseUrlPort=${base.url.port} --baseUrlPath=${base.url.path}</arguments>
+                                    <arguments>--baseUrlProtocol=${base.url.protocol} --baseUrlDomain=${base.url.domain} --baseUrlPort=${base.url.port} --baseUrlPath=${base.url.path} --websocketProtocol=${websocket.protocol}</arguments>
                                 </configuration>
                             </execution>
                             <execution>

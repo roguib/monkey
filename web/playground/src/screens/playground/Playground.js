@@ -8,7 +8,7 @@ import { Configuration } from "../../Configuration";
 import "./Playground.scss";
 
 function Playground() {
-  const WEBSOCKET_URL = `wss://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}api/websocket`;
+  const WEBSOCKET_URL = `${Configuration.websocketProtocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}api/websocket`;
   const [program, setProgram] = useState("");
   const [history, setHistory] = useState([]);
   const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
