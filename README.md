@@ -1,23 +1,17 @@
-# A Java 8 interpreter for Monkey
+# Monkey programming language
 
-This is my  Java 8 implementation of the interpreter described in the book [Writing an interpreter in Go](https://interpreterbook.com/). I always have been interested in learning how interpreters and compilers work under the hood, and found Thorsten's book an excellent introduction to this broader subject.
+A monorepo containing the following projects:
 
-## System requirements
+## Table of Contents
+- [Monkey interpreter](##overview-of-monkey)
+- [Online playground](##online-playground) 
+  - [Microservices](##microservices)
+    - [playground-ws](###playground-ws)
+    - [monkey-ws](###monkey-ws)
+  - [Online editor](##online-editor)
+- [How to run the project](##how-to-run-the-project)
 
-Any compatible Java 8 JRE should be enough to run this project. Execute the following command to install all dependencies:
-
-```
-mvn clean install
-```
-
-After that you will be able to run the tests by typing in your terminal:
-
-```
-mvn test
-```
-
-## Overview of Monkey
-
+## Overview of monkey
 Monkey language was created to showcase the different topics the book covers. It has a similar syntax as the C language and some of its features are:
 
 - Variable bindings
@@ -40,3 +34,25 @@ let add = fn(x, y) {
 let result = add(five, ten);
 ```
 
+## Online playground
+An online code editor to let users try out the different features of the language.
+
+## Microservices
+A Helidon MP microservice architecture that runs the entire business logic of the project.
+
+### playground-ws
+A microservice that handles the entire playground logic such as creating new playgrounds (from scratch or from an already prepared template) and keeping a history for a given playground.
+
+### monkey-ws
+A microservice that exposes the monkey interpreter. It waits for incoming requests with programs that have to be evaluated and returns the result from the compiler.
+
+## Online editor
+A React web application that uses the monaco editor to let users try the monkey features.
+
+## How to run the project
+From a CLI where docker compose is installed. 
+
+```bash
+docker-compose --env-file dev.env build --no-cache --progress=plain
+docker-compose up
+```

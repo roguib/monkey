@@ -7,14 +7,17 @@ import {
 import "./index.scss";
 import App from "./App";
 import Playground from "./screens/playground/Playground";
+import { Configuration } from "./Configuration.js";
+
+const url = Configuration.path;
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: `${url}`,
     element: <App />,
   },
   {
-    path: "/playground/:playgroundId",
+    path: `${url}:playgroundId`,
     element: <Playground />
   }
 ]);

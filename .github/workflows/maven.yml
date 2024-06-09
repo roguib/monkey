@@ -45,7 +45,9 @@ jobs:
       with:
         node-version: 18
     - name: Install playground dependencies
-      run: cd ./web/playground && npm i
+      run: cd ./web/playground && npm --global i yarn && yarn install
+    - name: Create Configuration.js file
+      run: cd ./web/playground && node_modules/.bin/gulp --baseUrlProtocol=http --baseUrlDomain=localhost --baseUrlPort=7001 --baseUrlPath="/" --websocketProtocol="ws"
     - name: Build playground
       run: cd ./web/playground && npm run build
     - name: Run playground tests

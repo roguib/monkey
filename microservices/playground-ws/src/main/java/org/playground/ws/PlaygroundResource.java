@@ -17,7 +17,7 @@ import org.playground.ws.repository.TemplateRepository;
 /**
  * Manages the lifecycle of a playground
  */
-@Path("/playground")
+@Path("api/playground")
 @RequestScoped
 public class PlaygroundResource {
     @Inject
@@ -46,6 +46,12 @@ public class PlaygroundResource {
      * https://github.com/helidon-io/helidon/pull/8166
      */
     @OPTIONS
-    @CrossOrigin(value = {"http://localhost:3000/"})
-    public void optionsForPlayground() {}
+    @Path("/new")
+    @CrossOrigin(value = {"https://www.roguib.com"}, allowMethods = {HttpMethod.POST})
+    public void optionsForNewPlayground() {}
+
+    @OPTIONS
+    @Path("/{playgroundId}")
+    @CrossOrigin(value = {"https://www.roguib.com"}, allowMethods = {HttpMethod.GET})
+    public void optionsForGetPlayground() {}
 }

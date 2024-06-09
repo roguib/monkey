@@ -14,7 +14,7 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(value = "/websocket")
+@ServerEndpoint(value = "/api/websocket")
 public class WebsocketEndpoint {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
 

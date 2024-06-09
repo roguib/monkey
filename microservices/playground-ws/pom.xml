@@ -80,9 +80,19 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>create Configuration</id>
+                                <goals>
+                                    <goal>gulp</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>--baseUrlProtocol=${base.url.protocol} --baseUrlDomain=${base.url.domain} --baseUrlPort=${base.url.port} --baseUrlPath=${base.url.path} --websocketProtocol=${websocket.protocol}</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>run react build</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>yarn</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>run build</arguments>
@@ -164,6 +174,7 @@
             <artifactId>jandex</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+            <version>3.1.2</version>
         </dependency>
         <dependency>
             <groupId>io.helidon.microprofile.testing</groupId>
