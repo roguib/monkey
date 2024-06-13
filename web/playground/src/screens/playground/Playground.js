@@ -1,6 +1,6 @@
 import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getPlaygroundHistory } from "../../services/PlaygroundService";
 import useWebSocket from "react-use-websocket";
@@ -12,6 +12,8 @@ function Playground() {
   const [program, setProgram] = useState("");
   const [history, setHistory] = useState([]);
   const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
+
+  const editorRef = useRef(undefined);
 
   const { sendMessage, lastMessage } = useWebSocket(WEBSOCKET_URL);
 
@@ -27,8 +29,19 @@ function Playground() {
     }
   }, [lastMessage]);
 
+  const handleKeydownEvent = (event) => {
+    event.stopImmediatePropagation();
+    if (event.key === "S" || event.key === "s" && (event.ctrlKey || event.metaKey)) {
+      // handle redo action
+      console.log("saved");
+      event.preventDefault();
+    } else if (event.key === "Z" && (event.ctrlKey || event.metaKey)) {
+      // handle undo action
+    }
+  };
+
   useEffect(() => {
-    const fn = async () => {
+    (async () => {
       if (state?.skipFetchHistory) {
         return;
       }
@@ -43,15 +56,17 @@ function Playground() {
           // of a known value
           handleEditorChanged(program);
         }
+
+        editorRef?.current?.addEventListener("keydown", handleKeydownEvent);
       } catch (error) {
         setPlaygroundNotFound(true);
         return;
       }
-    };
-    fn();
+    })();
     return () => {
       // make sure location state is cleared on browser refresh
       window.history.replaceState({}, document.title);
+      editorRef?.current?.removeEventListener("keydown", handleKeydownEvent);
     };
   }, [state?.skipFetchHistory]);
 
@@ -81,6 +96,7 @@ function Playground() {
         <Editor
           onEditorChanged={handleEditorChanged}
           initialValue={program}
+          ref={editorRef}
         />
       </div>
       <div style={{width: "30vw", height: "100vh"}}>

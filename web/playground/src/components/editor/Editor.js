@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { default as MonacoEditor } from "@monaco-editor/react";
 import "./Editor.scss";
 
@@ -10,7 +10,7 @@ import "./Editor.scss";
  * program written in the MonacoEditor
  * @returns
  */
-function Editor({ onEditorChanged, initialValue }) {
+const Editor = forwardRef(function Editor({ onEditorChanged, initialValue }, ref) {
   const MS_TIMEOUT_TO_EVALUATE = 5000;
   const [lastModifiedTimeout, setLastModifiedTimeout] = useState(() => {});
 
@@ -36,7 +36,7 @@ function Editor({ onEditorChanged, initialValue }) {
   };
 
   return (
-    <div className="Editor">
+    <div className="Editor" ref={ref}>
       <MonacoEditor
         height="100vh"
         defaultLanguage="javascript"
@@ -51,6 +51,6 @@ function Editor({ onEditorChanged, initialValue }) {
       />
     </div>
   );
-}
+});
 
 export default Editor;
