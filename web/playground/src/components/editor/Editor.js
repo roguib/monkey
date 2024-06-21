@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { formfactor } from "platform-detect";
 import { default as MonacoEditor } from "@monaco-editor/react";
 import "./Editor.scss";
 
@@ -43,15 +44,16 @@ function Editor({ onEditorChanged, initialValue }) {
   const handleEditorChange = (programInEditor) => {
     setProgram(programInEditor);
 
-    if (lastModifiedTimeout) {
-      clearTimeout(lastModifiedTimeout);
+    if (formfactor !== "desktop") {
+      if (lastModifiedTimeout) {
+        clearTimeout(lastModifiedTimeout);
+      }
+      setLastModifiedTimeout(
+        setTimeout(() => {
+          console.log(`${MS_TIMEOUT_TO_EVALUATE} without changes, sending the back to parent component`);
+          onEditorChanged(program);
+        }, MS_TIMEOUT_TO_EVALUATE));
     }
-
-    setLastModifiedTimeout(
-      setTimeout(() => {
-        console.log(`${MS_TIMEOUT_TO_EVALUATE} without changes, sending the back to parent component`);
-        onEditorChanged(program);
-      }, MS_TIMEOUT_TO_EVALUATE));
   };
 
   return (
