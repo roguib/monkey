@@ -4,3 +4,24 @@
     justify-content: center;
     overflow-y: hidden;
 }
+
+.playground-alert {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.playground-alert div {
+    max-width: 95vw;
+    flex-grow: 1;
+    margin-top: 1rem;
+}
+
+.playground-editor {
+    width: 70vw;
+}
+
+.playground-shell {
+    width: 30vw;
+    height: 100vh;
+}
