@@ -6,6 +6,8 @@ import { getPlaygroundHistory } from "../../services/PlaygroundService";
 import useWebSocket from "react-use-websocket";
 import { Configuration } from "../../Configuration";
 import "./Playground.scss";
+import { formfactor, macos } from "platform-detect";
+import Alert from "react-bootstrap/Alert";
 
 function Playground() {
   const WEBSOCKET_URL = `${Configuration.websocketProtocol}://${Configuration.baseUrl}${Configuration.port ? ":" + Configuration.port : ""}${Configuration.path}api/websocket`;
@@ -28,7 +30,7 @@ function Playground() {
   }, [lastMessage]);
 
   useEffect(() => {
-    const fn = async () => {
+    (async () => {
       if (state?.skipFetchHistory) {
         return;
       }
@@ -47,8 +49,7 @@ function Playground() {
         setPlaygroundNotFound(true);
         return;
       }
-    };
-    fn();
+    })();
     return () => {
       // make sure location state is cleared on browser refresh
       window.history.replaceState({}, document.title);
@@ -69,6 +70,20 @@ function Playground() {
     }
   }, []);
 
+  const getSaveKeys = () => {
+    return macos ?
+      "command and S" :
+      "control and S";
+  };
+
+  const getAlertString = () => {
+    if (formfactor === "desktop") {
+      return `Press ${getSaveKeys()} in your keyboard to compute new results of your program.`;
+    } else {
+      return "Wait for 5 seconds, without making any change in your program, to see the results.";
+    }
+  };
+
   if (playgroundNotFound) {
     // todo: improve this screen
     return (
@@ -76,19 +91,26 @@ function Playground() {
     );
   }
   return (
-    <div className="playground" data-testid="playground-screen">
-      <div style={{width: "70vw"}}>
-        <Editor
-          onEditorChanged={handleEditorChanged}
-          initialValue={program}
-        />
+    <>
+      <div className="playground-alert">
+        <Alert key="primary" variant="primary" dismissible>
+          <span>{getAlertString()}</span>
+        </Alert>
       </div>
-      <div style={{width: "30vw", height: "100vh"}}>
-        <Shell 
-          evalResults={history}
-        />
+      <div className="playground" data-testid="playground-screen">
+        <div className="playground-editor">
+          <Editor
+            onEditorChanged={handleEditorChanged}
+            initialValue={program}
+          />
+        </div>
+        <div className="playground-shell">
+          <Shell
+            evalResults={history}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

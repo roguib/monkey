@@ -15,6 +15,12 @@ jest.mock("./Editor", () => ({
   handleEditorChange: () => mockedHandleEditorChange,
 }));
 
+jest.mock("platform-detect", () => {
+  return {
+    __esModule: false,
+    formfactor: "desktop",
+  };
+});
 describe("Editor", () => {
   it("Renders Editor component", () => {
     Editor.mockReturnValue(<MonacoEditor />);
