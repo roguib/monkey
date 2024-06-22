@@ -3,19 +3,22 @@ package org.playground.ws.factory;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
-import jakarta.json.JsonString;
 import jakarta.ws.rs.NotFoundException;
 import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.dao.TemplateDao;
 import org.playground.ws.dto.CreatePlaygroundDto;
+import org.playground.ws.dto.PlaygroundHistoryDto;
 import org.playground.ws.repository.TemplateRepository;
 import org.playground.ws.services.CacheServiceImpl;
 import redis.clients.jedis.JedisPooled;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -70,10 +73,18 @@ public class PlaygroundFactory {
         JsonObject object = jsonReader.readObject();
         jsonReader.close();
 
+        final ArrayList<PlaygroundHistoryDto> playgroundHistory = new ArrayList<>();
+        object.getJsonArray("history").stream().forEach(jsonObjectBuilder -> {
+            final JsonObject jsonObject = jsonObjectBuilder.asJsonObject();
+            final String dateAsString = jsonObject.getString("date");
+            final String result = jsonObject.getString("result");
+            playgroundHistory.add(new PlaygroundHistoryDto(LocalDateTime.parse(dateAsString), result));
+        });
+
         final PlaygroundDto playground = new PlaygroundDto(
             playgroundId,
             object.getString("program"),
-            object.getJsonArray("history").getValuesAs(JsonString::getString)
+            playgroundHistory
         );
         LOGGER.info("New playground created: " + playground);
         return playground;

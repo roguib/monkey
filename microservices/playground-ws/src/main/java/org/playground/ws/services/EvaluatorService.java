@@ -1,6 +1,7 @@
 package org.playground.ws.services;
 
 import java.io.StringReader;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.Json;
 import jakarta.json.JsonBuilderFactory;
 import jakarta.json.JsonObject;
+import org.playground.ws.dto.PlaygroundHistoryDto;
 import redis.clients.jedis.JedisPooled;
 
 @ApplicationScoped
@@ -64,7 +66,9 @@ public class EvaluatorService {
 
             final EvalResponse evalRes = new EvalResponse(object.getString("result"), object.getString("status"));
             LOGGER.info("POST request to evaluate service executed with response: " + evalRes);
-            playground.addHistoryResult(evalRes.getResult());
+            final PlaygroundHistoryDto newResult =
+                    new PlaygroundHistoryDto(LocalDateTime.now(), evalRes.getResult());
+            playground.addHistoryResult(newResult);
 
             Gson gson = new Gson();
             String json = gson.toJson(playground);
