@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.factory.PlaygroundFactory;
 import org.playground.ws.services.EvaluatorService;
 import jakarta.inject.Inject;
@@ -42,7 +43,7 @@ public class WebsocketEndpoint {
     @OnMessage
     public void onMessage(Session session, String message) throws Exception {
         LOGGER.info("Message: " + message);
-        final Playground playground = PlaygroundFactory.getPlaygroundFromWsEvalRequest(message);
+        final PlaygroundDto playground = PlaygroundFactory.getPlaygroundFromWsEvalRequest(message);
         LOGGER.info("playground to be evaluated with values: " + playground);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
         final EvalResponse evalRes = evaluatorService.evaluate(playground);

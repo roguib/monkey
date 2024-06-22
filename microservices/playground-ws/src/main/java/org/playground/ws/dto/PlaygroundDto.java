@@ -1,19 +1,19 @@
-package org.playground.ws;
+package org.playground.ws.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Playground {
+public class PlaygroundDto {
     private String id;
     private String program;
     private ArrayList<String> history = new ArrayList<>(); // todo: this should be an array of date - eval result so it can be sorted in the client
 
-    public Playground(final String id) {
+    public PlaygroundDto(final String id) {
         this.id = id;
         this.program = "";
     }
 
-    public Playground(final String id, final String program, final List<String> history) {
+    public PlaygroundDto(final String id, final String program, final List<String> history) {
         this.id = id;
         this.program = program;
         this.history = new ArrayList<>(history);

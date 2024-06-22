@@ -10,7 +10,7 @@ import io.helidon.config.Config;
 import jakarta.json.JsonReader;
 import javassist.NotFoundException;
 import org.playground.ws.EvalResponse;
-import org.playground.ws.Playground;
+import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.WebsocketEndpoint;
 import io.helidon.webclient.api.HttpClientResponse;
 import io.helidon.webclient.api.WebClient;
@@ -26,7 +26,7 @@ public class EvaluatorService {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final JsonBuilderFactory JSON_BUILDER = Json.createBuilderFactory(Map.of());
 
-    public EvalResponse evaluate(final Playground playground) throws NotFoundException {
+    public EvalResponse evaluate(final PlaygroundDto playground) throws NotFoundException {
         final String playgroundId = playground.getId();
         final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         if (jedis.get(playgroundId) == null) {
