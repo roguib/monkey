@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.playground.ws.dto.CreatePlaygroundDto;
+import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.factory.PlaygroundFactory;
 import org.playground.ws.repository.TemplateRepository;
 
@@ -29,14 +30,14 @@ public class PlaygroundResource {
     @RequestBody(name = "templateId",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(type = SchemaType.OBJECT, requiredProperties = { "templateId" })))
-    public Playground createPlayground(final CreatePlaygroundDto createPlaygroundDto) {
+    public PlaygroundDto createPlayground(final CreatePlaygroundDto createPlaygroundDto) {
         final PlaygroundFactory playgroundFactory = new PlaygroundFactory(templateRepository);
         return playgroundFactory.getPlayground(createPlaygroundDto);
     }
 
     @GET
     @Path("/{playgroundId}")
-    public Playground getPlayground(@PathParam("playgroundId") String playgroundId) {
+    public PlaygroundDto getPlayground(@PathParam("playgroundId") String playgroundId) {
         return PlaygroundFactory.getPlayground(playgroundId);
     }
 

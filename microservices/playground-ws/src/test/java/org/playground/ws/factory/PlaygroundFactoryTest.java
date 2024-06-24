@@ -1,6 +1,5 @@
 package org.playground.ws.factory;
 
-import io.helidon.microprofile.testing.junit5.HelidonTest;
 import jakarta.ws.rs.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +10,15 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
-import org.playground.ws.Playground;
+import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.dao.TemplateDao;
 import org.playground.ws.dto.CreatePlaygroundDto;
+import org.playground.ws.dto.PlaygroundHistoryDto;
 import org.playground.ws.repository.TemplateRepository;
 import org.playground.ws.services.CacheServiceImpl;
 import org.playground.ws.utils.JedisPooledMocked;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -47,7 +48,7 @@ public class PlaygroundFactoryTest {
             try (MockedStatic<PlaygroundFactory> playgroundFactoryMocked = mockStatic(PlaygroundFactory.class, Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS))) {
                 playgroundFactoryMocked.when(() -> PlaygroundFactory.generatePlaygroundUniqueId()).thenAnswer((Answer<String>) invocation -> MOCKED_PLAYGROUND_ID);
 
-                final Playground playground = this.playgroundFactory.getPlayground(new CreatePlaygroundDto());
+                final PlaygroundDto playground = this.playgroundFactory.getPlayground(new CreatePlaygroundDto());
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
                 assertEquals(playground.getHistory().size(), 0);
@@ -71,7 +72,7 @@ public class PlaygroundFactoryTest {
                         TemplateDao.of("Mocked title", "Mocked description", MOCKED_PROGRAM)
                 );
                 doReturn(mockedFindByResponse).when(this.templateRepository).findById(any());
-                final Playground playground = this.playgroundFactory
+                final PlaygroundDto playground = this.playgroundFactory
                         .getPlayground(new CreatePlaygroundDto("Mocked Template Id"));
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
@@ -116,15 +117,33 @@ public class PlaygroundFactoryTest {
     public void testPlaygroundExists() {
         final String MOCKED_PLAYGROUND_ID = "abc-842-123";
         final JedisPooledMocked jedisPooledMocked = new JedisPooledMocked();
-        jedisPooledMocked.setValueForKey(MOCKED_PLAYGROUND_ID, "{ \"playgroundId\": \"abc-842-123\", \"program\": \"let a = 2;\\n a; \\n\", \"history\": [\"1\", \"2\"] }");
+        final String json = """
+        {
+            \"playgroundId\": \"abc-842-123\",
+            \"program\": \"let a = 2;\\n a; \\n\",
+            \"history\": [{
+                \"date\": \"2024-06-22T17:11:25.923195\",
+                \"result\": \"1\"
+            },
+            {
+                \"date\": \"2024-06-22T17:20:25.923195\",
+                \"result\": \"2\"
+            }]
+        }
+        """;
+        jedisPooledMocked.setValueForKey(MOCKED_PLAYGROUND_ID, json);
         try (MockedStatic<CacheServiceImpl> cacheServiceMocked = mockStatic(CacheServiceImpl.class)) {
             cacheServiceMocked.when(() -> CacheServiceImpl.getCacheConnection()).thenAnswer((Answer<JedisPooledMocked>) invocation -> jedisPooledMocked);
 
-            final Playground playground = PlaygroundFactory.getPlayground(MOCKED_PLAYGROUND_ID);
+            final PlaygroundDto playground = PlaygroundFactory.getPlayground(MOCKED_PLAYGROUND_ID);
 
             assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
             assertEquals(playground.getProgram(), "let a = 2;\n a; \n");
-            assertEquals(playground.getHistory(), new ArrayList<>(Arrays.asList(new String[]{"1", "2"})));
+
+            final ArrayList<PlaygroundHistoryDto> expectedHistoryResult = new ArrayList<>();
+            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22T17:11:25.923195"), "1"));
+            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22T17:20:25.923195"), "2"));
+            assertEquals(playground.getHistory(), expectedHistoryResult);
         }
     }
 }
