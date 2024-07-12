@@ -2,6 +2,7 @@ package org.playground.ws.factory;
 
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -13,6 +14,7 @@ import org.playground.ws.dto.CreatePlaygroundDto;
 import org.playground.ws.dto.PlaygroundHistoryDto;
 import org.playground.ws.repository.TemplateRepository;
 import org.playground.ws.services.CacheServiceImpl;
+import org.playground.ws.utils.adapters.LocaleDateTimeTypeAdapter;
 import redis.clients.jedis.JedisPooled;
 
 import java.io.StringReader;
@@ -53,7 +55,9 @@ public class PlaygroundFactory {
 
         // save the object in the cache, so we can start storing eval results
         final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
-        Gson gson = new Gson();
+        final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocaleDateTimeTypeAdapter())
+                .create();
         String json = gson.toJson(playground);
         jedis.set(playground.getId(), json);
 
