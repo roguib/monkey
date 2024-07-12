@@ -1,9 +1,11 @@
 package org.playground.ws;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.factory.PlaygroundFactory;
 import org.playground.ws.services.EvaluatorService;
@@ -14,6 +16,7 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
+import org.playground.ws.utils.adapters.LocaleDateTimeTypeAdapter;
 
 @ServerEndpoint(value = "/api/websocket")
 public class WebsocketEndpoint {
@@ -47,7 +50,9 @@ public class WebsocketEndpoint {
         LOGGER.info("playground to be evaluated with values: " + playground);
         // TODO: Notice that evaluator service is too optimistic. Handle errors properly
         final EvalResponse evalRes = evaluatorService.evaluate(playground);
-        Gson gson = new Gson();
+        final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocaleDateTimeTypeAdapter())
+                .create();
         session.getBasicRemote().sendObject(gson.toJson(evalRes));
     }
 

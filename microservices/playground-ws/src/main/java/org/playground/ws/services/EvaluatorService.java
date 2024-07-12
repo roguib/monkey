@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
 import jakarta.json.JsonReader;
@@ -20,6 +21,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonBuilderFactory;
 import jakarta.json.JsonObject;
 import org.playground.ws.dto.PlaygroundHistoryDto;
+import org.playground.ws.utils.adapters.LocaleDateTimeTypeAdapter;
 import redis.clients.jedis.JedisPooled;
 
 @ApplicationScoped
@@ -70,7 +72,9 @@ public class EvaluatorService {
                     new PlaygroundHistoryDto(LocalDateTime.now(), evalRes.getResult());
             playground.addHistoryResult(newResult);
 
-            Gson gson = new Gson();
+            final Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocaleDateTimeTypeAdapter())
+                    .create();
             String json = gson.toJson(playground);
             jedis.set(playground.getId(), json);
 

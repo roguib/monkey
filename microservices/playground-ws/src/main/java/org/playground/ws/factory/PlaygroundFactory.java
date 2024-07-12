@@ -20,6 +20,7 @@ import redis.clients.jedis.JedisPooled;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
@@ -82,7 +83,8 @@ public class PlaygroundFactory {
             final JsonObject jsonObject = jsonObjectBuilder.asJsonObject();
             final String dateAsString = jsonObject.getString("date");
             final String result = jsonObject.getString("result");
-            playgroundHistory.add(new PlaygroundHistoryDto(LocalDateTime.parse(dateAsString), result));
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd H:mm:ss");
+            playgroundHistory.add(new PlaygroundHistoryDto(LocalDateTime.parse(dateAsString, formatter), result));
         });
 
         final PlaygroundDto playground = new PlaygroundDto(
