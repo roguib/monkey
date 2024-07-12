@@ -19,6 +19,7 @@ import org.playground.ws.services.CacheServiceImpl;
 import org.playground.ws.utils.JedisPooledMocked;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -122,11 +123,11 @@ public class PlaygroundFactoryTest {
             \"playgroundId\": \"abc-842-123\",
             \"program\": \"let a = 2;\\n a; \\n\",
             \"history\": [{
-                \"date\": \"2024-06-22T17:11:25.923195\",
+                \"date\": \"2024-06-22 17:11:25\",
                 \"result\": \"1\"
             },
             {
-                \"date\": \"2024-06-22T17:20:25.923195\",
+                \"date\": \"2024-06-22 17:20:25\",
                 \"result\": \"2\"
             }]
         }
@@ -141,8 +142,9 @@ public class PlaygroundFactoryTest {
             assertEquals(playground.getProgram(), "let a = 2;\n a; \n");
 
             final ArrayList<PlaygroundHistoryDto> expectedHistoryResult = new ArrayList<>();
-            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22T17:11:25.923195"), "1"));
-            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22T17:20:25.923195"), "2"));
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd H:mm:ss");
+            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22 17:11:25", formatter), "1"));
+            expectedHistoryResult.add(new PlaygroundHistoryDto(LocalDateTime.parse("2024-06-22 17:20:25", formatter), "2"));
             assertEquals(playground.getHistory(), expectedHistoryResult);
         }
     }
