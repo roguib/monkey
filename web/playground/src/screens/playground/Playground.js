@@ -39,6 +39,11 @@ function Playground() {
         const { program = "", history = [] } = await getPlaygroundHistory(playgroundId);
         setProgram(program);
         setHistory(history);
+
+        if (program && !history.length) {
+          // TODO: This should already come in the history array. We shouldn't need an extra computation
+          handleEditorChanged(program);
+        }
       } catch (error) {
         setPlaygroundNotFound(true);
         return;
