@@ -1,6 +1,6 @@
 import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getPlaygroundHistory } from "../../services/PlaygroundService";
 import useWebSocket from "react-use-websocket";
@@ -25,7 +25,7 @@ function Playground() {
     if (lastMessage !== null) {
       const evalData = JSON.parse(lastMessage.data);
       // we're ignoring status for now
-      setHistory((prev) => prev.concat(evalData.result));
+      setHistory((prev) => prev.concat({ result: evalData.result, date: evalData.date }));
     }
   }, [lastMessage]);
 
@@ -55,14 +55,14 @@ function Playground() {
    * for an evaluation
    * @param {*} program
    */
-  const handleEditorChanged = useCallback((program) => {
+  const handleEditorChanged = (program) => {
     if (program) {
       sendMessage(JSON.stringify({
         playgroundId,
         program,
       }));
     }
-  }, []);
+  };
 
   const getSaveKeys = () => {
     return macos ?
