@@ -13,9 +13,16 @@ open -na Google\ Chrome --args --user-data-dir=/tmp/temporary-chrome-profile-dir
 
 You'll also need to create a redis image
 
-````bash
+```bash
 docker run --name monkey-redis -p 6379:6379 -d redis
-````
+```
+
+And a postgres database
+```bash
+ docker run -itd -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=playground -p 5432:5432 -v --name postgres
+```
+
+Make sure the values specified in `src/main/resources/application.yaml` point to the local running containers.
 
 ## Debug
 If you use Idea, or any editor with remote debugging capabilities, the easiest option is to create a remote debugging configuration while running the jar containing the MP project.

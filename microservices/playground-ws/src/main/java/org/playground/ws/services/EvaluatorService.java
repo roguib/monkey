@@ -1,16 +1,18 @@
 package org.playground.ws.services;
 
 import java.io.StringReader;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.helidon.common.config.ConfigValue;
 import io.helidon.config.Config;
 import jakarta.json.JsonReader;
 import javassist.NotFoundException;
 import org.playground.ws.EvalResponse;
-import org.playground.ws.Playground;
+import org.playground.ws.dto.PlaygroundDto;
 import org.playground.ws.WebsocketEndpoint;
 import io.helidon.webclient.api.HttpClientResponse;
 import io.helidon.webclient.api.WebClient;
@@ -18,6 +20,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.Json;
 import jakarta.json.JsonBuilderFactory;
 import jakarta.json.JsonObject;
+import org.playground.ws.dto.PlaygroundHistoryDto;
+import org.playground.ws.utils.adapters.LocaleDateTimeTypeAdapter;
 import redis.clients.jedis.JedisPooled;
 
 @ApplicationScoped
@@ -26,7 +30,7 @@ public class EvaluatorService {
     private static final Logger LOGGER = Logger.getLogger(WebsocketEndpoint.class.getName());
     private static final JsonBuilderFactory JSON_BUILDER = Json.createBuilderFactory(Map.of());
 
-    public EvalResponse evaluate(final Playground playground) throws NotFoundException {
+    public EvalResponse evaluate(final PlaygroundDto playground) throws NotFoundException {
         final String playgroundId = playground.getId();
         final JedisPooled jedis = CacheServiceImpl.getCacheConnection();
         if (jedis.get(playgroundId) == null) {
@@ -64,9 +68,13 @@ public class EvaluatorService {
 
             final EvalResponse evalRes = new EvalResponse(object.getString("result"), object.getString("status"));
             LOGGER.info("POST request to evaluate service executed with response: " + evalRes);
-            playground.addHistoryResult(evalRes.getResult());
+            final PlaygroundHistoryDto newResult =
+                    new PlaygroundHistoryDto(LocalDateTime.now(), evalRes.getResult());
+            playground.addHistoryResult(newResult);
 
-            Gson gson = new Gson();
+            final Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocaleDateTimeTypeAdapter())
+                    .create();
             String json = gson.toJson(playground);
             jedis.set(playground.getId(), json);
 
