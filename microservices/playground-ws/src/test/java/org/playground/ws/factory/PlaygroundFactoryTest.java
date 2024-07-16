@@ -70,7 +70,7 @@ public class PlaygroundFactoryTest {
 
                 final String MOCKED_PROGRAM = "let a = 1; a;";
                 final Optional<TemplateDao> mockedFindByResponse = Optional.of(
-                        TemplateDao.of("Mocked title", "Mocked description", MOCKED_PROGRAM)
+                        TemplateDao.of("Mocked title", "Mocked description", MOCKED_PROGRAM, "1")
                 );
                 doReturn(mockedFindByResponse).when(this.templateRepository).findById(any());
                 final PlaygroundDto playground = this.playgroundFactory
@@ -78,7 +78,9 @@ public class PlaygroundFactoryTest {
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
                 assertEquals(playground.getProgram(), MOCKED_PROGRAM);
-                assertEquals(playground.getHistory().size(), 0);
+                final ArrayList<PlaygroundHistoryDto> history = playground.getHistory();
+                assertEquals(history.size(), 1);
+                assertEquals(history.get(0).getResult(), "1");
             }
         }
     }

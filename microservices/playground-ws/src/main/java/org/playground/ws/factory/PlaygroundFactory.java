@@ -52,6 +52,9 @@ public class PlaygroundFactory {
         // if the user has selected a template, init the playground with the corresponding code
         if (templateDao.isPresent()) {
             playground.setProgram(templateDao.get().getProgram());
+            final ArrayList<PlaygroundHistoryDto> playgroundHistory = new ArrayList<>();
+            playgroundHistory.add(new PlaygroundHistoryDto(LocalDateTime.now(), templateDao.get().getResult()));
+            playground.setHistory(playgroundHistory);
         }
 
         // save the object in the cache, so we can start storing eval results
