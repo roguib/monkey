@@ -78,7 +78,9 @@ public class PlaygroundFactoryTest {
 
                 assertEquals(playground.getId(), MOCKED_PLAYGROUND_ID);
                 assertEquals(playground.getProgram(), MOCKED_PROGRAM);
-                assertEquals(playground.getHistory().size(), 0);
+                final ArrayList<PlaygroundHistoryDto> history = playground.getHistory();
+                assertEquals(history.size(), 1);
+                assertEquals(history.get(0).getResult(), "1");
             }
         }
     }
