@@ -24,11 +24,15 @@ public class TemplateDao implements Serializable {
     @Column(name = "program")
     String program;
 
-    public static TemplateDao of(String title, String description, String program) {
+    @Column(name="result")
+    String result;
+
+    public static TemplateDao of(final String title, final String description, final String program, final String result) {
         TemplateDao template = new TemplateDao();
         template.setTitle(title);
         template.setDescription(description);
         template.setProgram(program);
+        template.setResult(result);
 
         return template;
     }
@@ -65,13 +69,11 @@ public class TemplateDao implements Serializable {
         this.program = program;
     }
 
-    @Override
-    public String toString() {
-        return "TemplateDao{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", program=" + program +
-                '}';
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

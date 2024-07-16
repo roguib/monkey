@@ -2,10 +2,11 @@ CREATE TABLE templates (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255),
     description TEXT,
-    program TEXT
+    program TEXT,
+    result VARCHAR(255)
 );
 
-INSERT INTO templates VALUES('variableBinding', 'Variable binding', 'How variable binding works in Monkey language', '');
+INSERT INTO templates VALUES('variableBinding', 'Variable binding', 'How variable binding works in Monkey language', '', '15');
 UPDATE templates
 SET program = (
     SELECT program
@@ -16,7 +17,7 @@ SET program = (
 )
 WHERE id = 'variableBinding';
 
-INSERT INTO templates VALUES('controlFlow', 'Control flow', 'Control the execution flow of a Monkey program', '');
+INSERT INTO templates VALUES('controlFlow', 'Control flow', 'Control the execution flow of a Monkey program', '', 'false');
 UPDATE templates
 SET program = (
     SELECT program
@@ -27,7 +28,7 @@ SET program = (
 )
 WHERE id = 'controlFlow';
 
-INSERT INTO templates VALUES('arrayBuiltinFn', 'Arrays and built in functions', 'Arrays data structure as well as built in functions to work with arrays', '');
+INSERT INTO templates VALUES('arrayBuiltinFn', 'Arrays and built in functions', 'Arrays data structure as well as built in functions to work with arrays', '', '[4, false, 1, 4, [99, 98, 97], 4, 25]');
 UPDATE templates
 SET program = (
     SELECT program
@@ -38,7 +39,7 @@ SET program = (
 )
 WHERE id = 'arrayBuiltinFn';
 
-INSERT INTO templates VALUES('dictionary', 'Dictionary data structure', 'Working with dictionaries', '');
+INSERT INTO templates VALUES('dictionary', 'Dictionary data structure', 'Working with dictionaries', '', '20');
 UPDATE templates
 SET program = (
     SELECT program
@@ -49,7 +50,7 @@ SET program = (
 )
 WHERE id = 'dictionary';
 
-INSERT INTO templates VALUES('closures', 'Closures', 'Closures in Monkey language', '');
+INSERT INTO templates VALUES('closures', 'Closures', 'Closures in Monkey language', '', '29');
 UPDATE templates
 SET program = (
     SELECT program

@@ -39,6 +39,10 @@ public class PlaygroundDto {
         return history;
     }
 
+    public void setHistory(ArrayList<PlaygroundHistoryDto> history) {
+        this.history = history;
+    }
+
     public void addHistoryResult(final PlaygroundHistoryDto result) {
         this.history.add(result);
     }
