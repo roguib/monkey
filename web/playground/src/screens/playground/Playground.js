@@ -1,5 +1,6 @@
 import Editor from "../../components/editor/Editor";
 import Shell from "../../components/shell/Shell";
+import Placeholder from "../../components/placeholder/Placeholder";
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getPlaygroundHistory } from "../../services/PlaygroundService";
@@ -78,31 +79,33 @@ function Playground() {
     }
   };
 
-  if (playgroundNotFound) {
-    // todo: improve this screen
-    return (
-      <p>404 playground wasn't found</p>
-    );
-  }
   return (
     <>
-      <div className="playground-alert">
-        <Alert key="primary" variant="primary" dismissible>
-          <span>{getAlertString()}</span>
-        </Alert>
-      </div>
+      {playgroundNotFound ?
+        <></> :
+        <div className="playground-alert">
+          <Alert key="primary" variant="primary" dismissible>
+            <span>{getAlertString()}</span>
+          </Alert>
+        </div>
+      }
       <div className="playground" data-testid="playground-screen">
-        <div className="playground-editor">
-          <Editor
-            onEditorChanged={handleEditorChanged}
-            initialValue={program}
-          />
-        </div>
-        <div className="playground-shell">
-          <Shell
-            evalResults={history}
-          />
-        </div>
+        {playgroundNotFound ?
+          <Placeholder type="page" title="Ops! Playground not found" description="The playground you are looking for has been deleted or it doesn't exist." /> : 
+          <>
+            <div className="playground-editor">
+              <Editor
+                onEditorChanged={handleEditorChanged}
+                initialValue={program}
+              />
+            </div>
+            <div className="playground-shell">
+              <Shell
+                evalResults={history}
+              />
+            </div>
+          </>
+        }
       </div>
     </>
   );
