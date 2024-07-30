@@ -35,8 +35,7 @@ const router = createBrowserRouter([
   {
     path: `${url}:playgroundId`,
     element: <Playground />,
-    errorElement: getErrorElement(),
-    // TODO: loader function that checks if the playground exist before navigating
+    errorElement: getErrorElement()
   }
 ]);
 
