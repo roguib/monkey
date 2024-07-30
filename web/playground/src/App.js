@@ -1,4 +1,4 @@
-import logo from "./logo.png";
+import logo from "./images/logo.png";
 import "./App.scss";
 import  TemplateDialog from "./components/templateDialog/TemplateDialog";
 import { useNavigate } from "react-router-dom";
