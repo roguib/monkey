@@ -15,6 +15,7 @@ function Playground() {
   const [program, setProgram] = useState("");
   const [history, setHistory] = useState([]);
   const [playgroundNotFound, setPlaygroundNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { sendMessage, lastMessage } = useWebSocket(WEBSOCKET_URL);
 
@@ -43,6 +44,8 @@ function Playground() {
       } catch (error) {
         setPlaygroundNotFound(true);
         return;
+      } finally {
+        setIsLoading(false);
       }
     })();
     return () => {
@@ -78,6 +81,10 @@ function Playground() {
       return "Wait for 5 seconds, without making any change in your program, to see the results.";
     }
   };
+
+  if (isLoading) {
+    return (<></>);
+  }
 
   return (
     <>
