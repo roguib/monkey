@@ -34,6 +34,7 @@ function Playground() {
   useEffect(() => {
     (async () => {
       if (state?.skipFetchHistory) {
+        setIsLoading(false);
         return;
       }
 
