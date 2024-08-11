@@ -13,8 +13,16 @@ jest.mock("platform-detect", () => {
     macos: true,
   };
 });
+jest.mock('../../services/PlaygroundService.js', () => {
+  const originalModule = jest.requireActual('../../services/PlaygroundService.js');
+  return {
+    __esModule: true,
+    ...originalModule,
+    getPlaygroundHistory: () => jest.fn(() => [{ program: '', history: [] }])
+  };
+});
 describe("Playground", () => {
-  it("renders Playground component", () => {
+  it("renders Playground component", async () => {
     render(
       <BrowserRouter>
         <Playground />
@@ -22,6 +30,6 @@ describe("Playground", () => {
     );
 
     // ensure playground is in the document and enabled
-    expect(screen.getByTestId("playground-screen")).toBeEnabled();
+    expect(await screen.findByTestId("playground-screen")).toBeEnabled();
   });
 });
