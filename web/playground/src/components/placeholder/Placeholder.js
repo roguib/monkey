@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
  * @param {Object} props
  * @param {"page"} props.type
  * @param {String} props.title
+ * @param {String} props.description
  */
 function Placeholder({ type, title, description }) {
   const goBack = () => {
